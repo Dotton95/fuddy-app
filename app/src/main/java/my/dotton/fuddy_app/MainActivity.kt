@@ -31,6 +31,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         for(permission in REQUIRED_PERMISSIONS){
             if(ContextCompat.checkSelfPermission(this,permission)!= PackageManager.PERMISSION_GRANTED){
                 rejectedPermissionList.add(permission)
+
             }
         }
         //거절된 퍼미션이 있다면 권한 요청
