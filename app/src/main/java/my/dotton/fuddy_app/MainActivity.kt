@@ -22,6 +22,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
 
+
+
     //퍼미션 체크 및 권한 요청 함수
     private fun checkPermissions(){
         //거절되었거나 아직 수락하지 않은 권한을 저장할 배열
