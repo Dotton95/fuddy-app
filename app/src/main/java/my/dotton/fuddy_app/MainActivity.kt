@@ -1,6 +1,8 @@
 package my.dotton.fuddy_app
 
+import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -10,6 +12,7 @@ import my.dotton.fuddy_app.Fragment.HomeFragment
 import my.dotton.fuddy_app.Fragment.WeatherFragment
 import my.dotton.fuddy_app.databinding.ActivityMainBinding
 import java.util.ArrayList
+import java.util.jar.Manifest
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
@@ -21,9 +24,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         android.Manifest.permission.ACCESS_FINE_LOCATION,
         android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
-
+    companion object{
+        var mChckPermission = false
+    }
     //퍼미션 체크 및 권한 요청 함수
-    private fun checkPermissions(){
+    private fun checkPermissions() : Boolean{
         //거절되었거나 아직 수락하지 않은 권한을 저장할 배열
         var rejectedPermissionList = ArrayList<String>()
 
@@ -35,17 +40,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             }
         }
         //거절된 퍼미션이 있다면 권한 요청
-        if(rejectedPermissionList.isNotEmpty()){
+        return if(rejectedPermissionList.isNotEmpty()){
             val array = arrayOfNulls<String>(rejectedPermissionList.size)
             ActivityCompat.requestPermissions(this,rejectedPermissionList.toArray(array),multiplePermissionsCode)
-
-        }
+             false
+        }else true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        checkPermissions()
+        mChckPermission = checkPermissions()
 
         supportFragmentManager.beginTransaction().replace(R.id.main_frame, HomeFragment()).commit()
         binding.mainNavigation.setOnItemSelectedListener { item->
@@ -75,7 +80,5 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             }
         }
     }
-
-
 
 }
