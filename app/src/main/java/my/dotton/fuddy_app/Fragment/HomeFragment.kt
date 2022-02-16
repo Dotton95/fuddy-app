@@ -39,8 +39,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home){
 
     private val REQUEST_PERMISSION_LOCATION = 10
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mLocationRequest = com.google.android.gms.location.LocationRequest.create().apply {
