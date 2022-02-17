@@ -16,7 +16,6 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import my.dotton.fuddy_app.MainActivity.Companion.mChckPermission
 import my.dotton.fuddy_app.R
 import my.dotton.fuddy_app.databinding.FragmentHomeBinding
 import java.util.*
@@ -57,6 +56,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home){
         var admin = if(mResult.get(0).adminArea!=null) mResult.get(0).adminArea else mResult.get(0).subAdminArea
         var local = if(mResult.get(0).locality!=null) mResult.get(0).locality else mResult.get(0).subLocality
 
+        startLocationUpdates()
         return admin+" "+local
     }
     private  fun startLocationUpdates(){
@@ -68,6 +68,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home){
             mLocationRequest,mLocationCallback, Looper.myLooper())
     }
 
+    //시스템으로 부터 위치 정보를 롤백으로 받음
     private  val mLocationCallback = object : LocationCallback(){
         override fun onLocationResult(p0: LocationResult) {
             //시스템에서 받은 location 정보를 onLocationChanged()에 전달
@@ -77,5 +78,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home){
     fun onLocationChanged(location:Location){
         mLastLocation = location
         //요기에 이제 변경된 위도경도 저장
+        binding.lat.text = ""+mLastLocation.latitude;
+        binding.lon.text = ""+mLastLocation.longitude;
     }
 }

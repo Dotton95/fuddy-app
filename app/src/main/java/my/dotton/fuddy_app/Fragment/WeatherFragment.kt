@@ -9,4 +9,11 @@ import my.dotton.fuddy_app.R
 import my.dotton.fuddy_app.databinding.FragmentWeatherBinding
 
 class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_weather) {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
 }

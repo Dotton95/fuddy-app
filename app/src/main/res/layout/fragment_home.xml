@@ -173,6 +173,18 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"/>
         </LinearLayout>
+        <TextView
+            android:id="@+id/lat"
+            android:text="위도"
+            app:layout_constraintBottom_toTopOf="@+id/lon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/lon"
+            android:text="경도"
+            app:layout_constraintBottom_toTopOf="@+id/home_iv_truck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <ImageView
             android:id="@+id/home_iv_truck"
             android:src="@drawable/truck"

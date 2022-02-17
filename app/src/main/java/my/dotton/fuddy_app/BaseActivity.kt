@@ -13,5 +13,7 @@ abstract class BaseActivity<T: ViewDataBinding>(@LayoutRes private val layoutRes
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         binding = DataBindingUtil.setContentView(this,layoutResId)
+        initView()
     }
+    open fun initView(){}
 }
