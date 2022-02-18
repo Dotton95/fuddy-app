@@ -23,7 +23,8 @@ import java.util.*
 import java.util.jar.Manifest
 
 
-class HomeFragment : Fragment(){
+class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+    //Fragment(){
     //BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     var mLocationManager: LocationManager? = null
@@ -40,17 +41,20 @@ class HomeFragment : Fragment(){
 
     private val REQUEST_PERMISSION_LOCATION = 10
 
-    private lateinit var binding:FragmentHomeBinding
+    //private lateinit var binding:FragmentHomeBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-//        mLocationRequest = com.google.android.gms.location.LocationRequest.create().apply {
-//            priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-//        }
+//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 //
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
-        return binding.root
-    }
+////        mLocationRequest = com.google.android.gms.location.LocationRequest.create().apply {
+////            priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+////        }
+////
+//        //binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
+//
+//        return binding.root
+//    }
+
+
 }
 //
 //
