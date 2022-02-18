@@ -22,63 +22,68 @@ import java.util.*
 import java.util.jar.Manifest
 
 
-class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home){
+class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
-    var mLocationManager : LocationManager?=null
-    var mLocationListener : LocationListener?=null
+    var mLocationManager: LocationManager? = null
+    var mLocationListener: LocationListener? = null
 
     //현재 위치를 가져오기 위한 변수
-    private var mFusedLocationProviderClient : FusedLocationProviderClient? = null
-    
+    //private var mFusedLocationProviderClient : FusedLocationProviderClient? = null
+
     //위치 값을 가지고 있는 객체
-    lateinit var mLastLocation : Location
-    
+    //lateinit var mLastLocation : Location
+
     //위치 정보 요청의 매개변수를 저장하는
-    internal lateinit var mLocationRequest: LocationRequest
+    //internal lateinit var mLocationRequest: LocationRequest
 
     private val REQUEST_PERMISSION_LOCATION = 10
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        mLocationRequest = com.google.android.gms.location.LocationRequest.create().apply {
-            priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-
+//        mLocationRequest = com.google.android.gms.location.LocationRequest.create().apply {
+//            priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+//        }
+//
         return  binding.root
     }
-
-
-    //현재 위도 경도의 주소 받아오기
-    private fun getCurrentAddress(lat:Double,lon:Double):String{
-
-        var mResult:List<Address> = Geocoder(requireContext(), Locale.KOREAN).getFromLocation(lat,lon,1)
-
-        var admin = if(mResult.get(0).adminArea!=null) mResult.get(0).adminArea else mResult.get(0).subAdminArea
-        var local = if(mResult.get(0).locality!=null) mResult.get(0).locality else mResult.get(0).subLocality
-
-        startLocationUpdates()
-        return admin+" "+local
-    }
-    private  fun startLocationUpdates(){
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
-        if(ActivityCompat.checkSelfPermission(requireContext(),android.Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED) return
-
-        mFusedLocationProviderClient!!.requestLocationUpdates(
-            mLocationRequest,mLocationCallback, Looper.myLooper())
-    }
-
-    //시스템으로 부터 위치 정보를 롤백으로 받음
-    private  val mLocationCallback = object : LocationCallback(){
-        override fun onLocationResult(p0: LocationResult) {
-            //시스템에서 받은 location 정보를 onLocationChanged()에 전달
-            onLocationChanged(p0.lastLocation)
-        }
-    }
-    fun onLocationChanged(location:Location){
-        mLastLocation = location
-        //요기에 이제 변경된 위도경도 저장
-        binding.lat.text = ""+mLastLocation.latitude;
-        binding.lon.text = ""+mLastLocation.longitude;
-    }
 }
+//
+//
+//    //현재 위도 경도의 주소 받아오기
+//    private fun getCurrentAddress(lat:Double,lon:Double):String{
+//
+//        var mResult:List<Address> = Geocoder(requireContext(), Locale.KOREAN).getFromLocation(lat,lon,1)
+//
+//        var admin = if(mResult.get(0).adminArea!=null) mResult.get(0).adminArea else mResult.get(0).subAdminArea
+//        var local = if(mResult.get(0).locality!=null) mResult.get(0).locality else mResult.get(0).subLocality
+//
+//        startLocationUpdates()
+//        return admin+" "+local
+//    }
+//    private  fun startLocationUpdates(){
+//        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+//
+//        if(ActivityCompat.checkSelfPermission(requireContext(),android.Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED) return
+//
+//        mFusedLocationProviderClient!!.requestLocationUpdates(
+//            mLocationRequest,mLocationCallback, Looper.myLooper())
+//    }
+//
+//    //시스템으로 부터 위치 정보를 롤백으로 받음
+//    private  val mLocationCallback = object : LocationCallback(){
+//        override fun onLocationResult(p0: LocationResult) {
+//            //시스템에서 받은 location 정보를 onLocationChanged()에 전달
+//            onLocationChanged(p0.lastLocation)
+//        }
+//    }
+//    fun onLocationChanged(location:Location){
+//        mLastLocation = location
+//        //요기에 이제 변경된 위도경도 저장
+//        binding.lat.text = ""+mLastLocation.latitude;
+//        binding.lon.text = ""+mLastLocation.longitude;
+//    }
+//}
