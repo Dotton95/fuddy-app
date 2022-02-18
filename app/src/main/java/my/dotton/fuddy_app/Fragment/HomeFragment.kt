@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -22,7 +23,8 @@ import java.util.*
 import java.util.jar.Manifest
 
 
-class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+class HomeFragment : Fragment(){
+    //BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     var mLocationManager: LocationManager? = null
     var mLocationListener: LocationListener? = null
@@ -38,17 +40,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val REQUEST_PERMISSION_LOCATION = 10
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    private lateinit var binding:FragmentHomeBinding
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
 //        mLocationRequest = com.google.android.gms.location.LocationRequest.create().apply {
 //            priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 //        }
 //
-        return  binding.root
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
+        return binding.root
     }
 }
 //

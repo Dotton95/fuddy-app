@@ -4,22 +4,22 @@
     <item
         android:id="@+id/menu_home"
         android:icon="@drawable/outline_home_24"
-        android:title="@string/covid"
+        android:title="홈"
         android:enabled="true"/>
     <item
         android:id="@+id/menu_weather"
         android:icon="@drawable/outline_wb_sunny_24"
-        android:title="@string/covid"
+        android:title="날씨"
         android:enabled="true"/>
     <item
         android:id="@+id/menu_covid"
         android:icon="@drawable/outline_show_chart_24"
-        android:title="@string/covid"
+        android:title="코로나"
 
         android:enabled="true"/>
     <item
         android:id="@+id/menu_area"
         android:icon="@drawable/outline_outlined_flag_24"
-        android:title="@string/covid"
+        android:title="장소"
         android:enabled="true"/>
 </menu>
