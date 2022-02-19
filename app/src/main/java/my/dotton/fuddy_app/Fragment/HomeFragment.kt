@@ -46,6 +46,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             mLocationRequest = com.google.android.gms.location.LocationRequest.create().apply {
                 priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
             }
+
+            startLocationUpdates()
         }
     }
     //시스템으로 부터 위치 정보를 롤백으로 받음
@@ -58,8 +60,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     fun onLocationChanged(location:Location){
         mLastLocation = location
         //요기에 이제 변경된 위도경도 저장
-        binding.lat.text = ""+mLastLocation.latitude;
-        binding.lon.text = ""+mLastLocation.longitude;
+        binding.lat.text = "위도 - "+mLastLocation.latitude;
+        binding.lon.text = "경도 - "+mLastLocation.longitude;
     }
 
     //현재 위도 경도의 주소 받아오기
