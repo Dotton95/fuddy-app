@@ -19,16 +19,20 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import my.dotton.fuddy_app.Model.Weather
+import my.dotton.fuddy_app.Model.WeatherResponse
 import my.dotton.fuddy_app.R
+import my.dotton.fuddy_app.RetrofitClient
+import my.dotton.fuddy_app.WeatherInterface
 import my.dotton.fuddy_app.databinding.FragmentHomeBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 import java.util.jar.Manifest
 
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
-    var mLocationManager: LocationManager? = null
-    var mLocationListener: LocationListener? = null
-
     //현재 위치를 가져오기 위한 변수
     private var mFusedLocationProviderClient : FusedLocationProviderClient? = null
 
@@ -75,14 +79,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     //시스템으로 부터 받은 위치정보를 화면에 갱신해주는 메소드
     fun onLocationChanged(location:Location){
         mLastLocation = location
-        binding.lat.text = "위도 - "+mLastLocation.latitude
-        binding.lon.text = "경도 - "+mLastLocation.longitude
-
         getCurrentAddress(mLastLocation.latitude,mLastLocation.longitude)
+        getWeatherLatLonData(mLastLocation.longitude,mLastLocation.longitude,"")
     }
 
-    //현재 위도 경도를 받아와 주소확인
-    private fun getCurrentAddress(lat:Double,lon:Double):String{
+    //현재 위도 경도를 주소로 지오코딩 & 화면 설정
+    private fun getCurrentAddress(lat:Double,lon:Double){
         var address = Geocoder(requireContext(), Locale.KOREAN).getFromLocation(lat,lon,1)
 
         var admin = if(address[0].adminArea!=null) ""+address[0].adminArea
@@ -90,6 +92,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         var local = if(address[0].locality!=null) ""+address[0].locality
                     else ""+address[0].subLocality
 
-        return admin+" "+local
+        binding.homeTvAddress.text = admin+local
+    }
+    //현재 위도 경도로 날씨 받아오기
+    private fun getWeatherLatLonData(lat:Double,lon:Double,key:String){
+        val weatherInterface = RetrofitClient.weather_retrofit.create(WeatherInterface::class.java)
+        weatherInterface.getWeatherLatlon(lat.toString(),lon.toString(),key).enqueue(object : Callback<WeatherResponse> {
+            override fun onResponse( call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
+                if(response.isSuccessful){
+                    val wResult = response.body() as WeatherResponse
+                    TODO("Not yet implemented")
+
+                }
+            }
+
+            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 }

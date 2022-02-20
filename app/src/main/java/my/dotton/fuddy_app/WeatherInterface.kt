@@ -13,14 +13,14 @@ interface WeatherInterface {
     ) : Call<WeatherResponse>
 
     @GET("weather")
-    fun getWeatherLation(
+    fun getWeatherLatlon(
         @Query("lat") lat:String,
         @Query("lon") lon:String,
         @Query("appid") appid:String
     ) : Call<WeatherResponse>
 
     @GET("forecast")
-    fun getTimeWeatherLation(
+    fun getTimeWeatherLatlon(
         @Query("lat") lat:String,
         @Query("lon") lon:String,
         @Query("appid") appid: String
