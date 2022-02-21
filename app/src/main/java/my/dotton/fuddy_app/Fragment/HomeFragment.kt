@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.location.*
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -94,22 +95,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding.homeTvAddress.text = admin+local
     }
-    //현재 위도 경도로 날씨 받아오기
+    //현재 위도 경도로 날씨 & 현재 온도 받아오기 
     private fun getWeatherLatLonData(lat:Double,lon:Double,key:String){
         val weatherInterface = RetrofitClient.weather_retrofit.create(WeatherInterface::class.java)
         weatherInterface.getWeatherLatlon(lat.toString(),lon.toString(),key).enqueue(object : Callback<WeatherResponse> {
             override fun onResponse( call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
                 if(response.isSuccessful){
                     val wResult = response.body() as WeatherResponse
-                    TODO("Not yet implemented")
-
-                }
+                    when(wResult.weather[0].id){
+                        in 200..200 -> binding.homeIvWeather.setImageResource(R.drawable.thunder)
+                        in 300..599 -> binding.homeIvWeather.setImageResource(R.drawable.rain)
+                        in 600..699 -> binding.homeIvWeather.setImageResource(R.drawable.snow)
+                        in 700..799 -> binding.homeIvWeather.setImageResource(R.drawable.mist)
+                        800 -> binding.homeIvWeather.setImageResource(R.drawable.sun_small)
+                        801 -> binding.homeIvWeather.setImageResource(R.drawable.cloud_small)
+                        in 802..899 -> binding.homeIvWeather.setImageResource(R.drawable.cloud_many)
+                    }
+                    binding.homeTvTemp.text = "현재온도 : "+(wResult.main.temp-273.15).toInt().toString()+"℃"
+                }else Log.d("HomeFragment","getWeatherLatLon - onResponse : Error code ${response.code()}")
             }
 
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
+            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) { Log.d("HomeFragment",t.message?:"통신오류") }
         })
     }
 }
