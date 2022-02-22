@@ -83,7 +83,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     fun onLocationChanged(location:Location){
         mLastLocation = location
         getCurrentAddress(mLastLocation.latitude,mLastLocation.longitude)
-        getWeatherLatLonData(mLastLocation.longitude,mLastLocation.longitude, "${BuildConfig.WEATHER_API_KEY}")
+        getWeatherLatLonData(mLastLocation.latitude,mLastLocation.longitude, "${BuildConfig.WEATHER_API_KEY}")
     }
 
     //현재 위도 경도를 주소로 지오코딩 & 화면 설정
@@ -95,7 +95,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         var local = if(address[0].locality!=null) ""+address[0].locality
                     else ""+address[0].subLocality
 
-        binding.homeTvAddress.text = admin+local
+        binding.homeTvAddress.text = admin+" "+local
     }
     //현재 위도 경도로 날씨 & 현재 온도 받아오기 
     private fun getWeatherLatLonData(lat:Double,lon:Double,key:String){
