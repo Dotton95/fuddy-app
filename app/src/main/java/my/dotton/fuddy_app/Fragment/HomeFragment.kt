@@ -20,6 +20,8 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import my.dotton.fuddy_app.BuildConfig
+
 import my.dotton.fuddy_app.Model.Weather
 import my.dotton.fuddy_app.Model.WeatherResponse
 import my.dotton.fuddy_app.R
@@ -81,7 +83,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     fun onLocationChanged(location:Location){
         mLastLocation = location
         getCurrentAddress(mLastLocation.latitude,mLastLocation.longitude)
-        getWeatherLatLonData(mLastLocation.longitude,mLastLocation.longitude,"")
+        getWeatherLatLonData(mLastLocation.longitude,mLastLocation.longitude, "${BuildConfig.WEATHER_API_KEY}")
     }
 
     //현재 위도 경도를 주소로 지오코딩 & 화면 설정
