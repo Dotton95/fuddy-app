@@ -99,7 +99,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
     //현재 위도 경도로 날씨 & 현재 온도 받아오기 
     private fun getWeatherLatLonData(lat:Double,lon:Double,key:String){
-        val weatherInterface = RetrofitClient.weather_retrofit.create(WeatherInterface::class.java)
+        val weatherInterface = RetrofitClient.weatherRetrofit.create(WeatherInterface::class.java)
         weatherInterface.getWeatherLatlon(lat.toString(),lon.toString(),key).enqueue(object : Callback<WeatherResponse> {
             override fun onResponse( call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
                 if(response.isSuccessful){
