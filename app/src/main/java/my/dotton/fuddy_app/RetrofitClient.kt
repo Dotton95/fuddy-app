@@ -28,8 +28,8 @@ object RetrofitClient {
             .build()
         return Retrofit.Builder()
             .baseUrl(base_url)
-            .addConverterFactory(factory)
             .client(client)
+            .addConverterFactory(factory)
             .build()
     }
     val weatherRetrofit: Retrofit = initRetrofit(WEATHER_URL, GsonConverterFactory.create())

@@ -40,8 +40,31 @@ data class Items(
 
 @Xml(name="item")
 data class Item(
-    @PropertyElement
-    val seq:String,
-    @PropertyElement
-    val stateDt:String
+    //게시글번호
+    @PropertyElement(name = "seq")
+    val seq: String,
+    //기준일
+    @PropertyElement(name = "stateDt")
+    val stateDt: String,
+    //기준시간
+    @PropertyElement(name = "stateTime")
+    val stateTime: String,
+    //확진자 수
+    @PropertyElement(name = "decideCnt")
+    val decideCnt: String,
+    //사망자 수
+    @PropertyElement(name = "deathCnt")
+    val deathCnt: String,
+    //누적 의심 신고 검사자
+    @PropertyElement(name = "accExamCnt")
+    val accExamCnt: String?=null,
+    //누적 확진률
+    @PropertyElement(name = "accDefRate")
+    val accDefRate: String?=null,
+    //등록일시
+    @PropertyElement(name = "createDt")
+    val createDt: String,
+    //수정일시
+    @PropertyElement(name = "updateDt")
+    val updateDt: String
 )

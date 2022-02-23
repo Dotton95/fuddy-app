@@ -53,7 +53,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
 
             startLocationUpdates()
-            getCovidData()
         }
     }
 
@@ -83,6 +82,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         mLastLocation = location
         getCurrentAddress(mLastLocation.latitude,mLastLocation.longitude)
         getWeatherLatLonData(mLastLocation.latitude,mLastLocation.longitude, "${BuildConfig.WEATHER_API_KEY}")
+        getCovidData()
     }
 
     //현재 위도 경도를 주소로 지오코딩 & 화면 설정
@@ -125,15 +125,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         covidInterface.getCovid(BuildConfig.COVID_API_KEY).enqueue(object :Callback<CovidResponse>{
             override fun onResponse(call: Call<CovidResponse>, response: Response<CovidResponse>) {
                 if(response.isSuccessful()){
-                    val test = response.body()
-                    //binding.homeTvDecideCnt.text = test.body.items.item[0].
+                    val test = response.body() as CovidResponse
 
-                }
+                    binding.homeTvDecideCnt.text = test.body.items.item[0].decideCnt
+                    binding.homeTvAccDefRate.text = test.body.items.item[0].accDefRate+"%"
+                    binding.homeTvAccExamCnt.text = test.body.items.item[0].accExamCnt
+                    binding.homeTvDeathCnt.text = test.body.items.item[0].deathCnt
+
+
+                }else Log.d("HomeFragment","getCovidData - onResponse : Error code ${response.code()}")
             }
 
-            override fun onFailure(call: Call<CovidResponse>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
+            override fun onFailure(call: Call<CovidResponse>, t: Throwable) {Log.d("HomeFragment",t.message?:"통신오류") }
 
         })
     }
