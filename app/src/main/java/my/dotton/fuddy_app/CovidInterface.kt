@@ -18,12 +18,7 @@ interface CovidInterface {
 
     @GET("getCovid19InfStateJson")
     fun getCovid(
-        @Query("serviceKey") serviceKey:String,
-        @Query("pageNo") pageNo:Int,
-        @Query("numOfRows") numOfRows:Int,
-        @Query("startCreateDt") startCreateDt:Int,
-        @Query("endCreateDt") endCreateDt:Int,
-        @Query("_type") _type:String
+        @Query("serviceKey") serviceKey:String
     ) :Call<CovidResponse>
 
 }

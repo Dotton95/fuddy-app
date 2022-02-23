@@ -20,13 +20,11 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import my.dotton.fuddy_app.BuildConfig
+import my.dotton.fuddy_app.*
+import my.dotton.fuddy_app.Model.CovidResponse
 
 import my.dotton.fuddy_app.Model.Weather
 import my.dotton.fuddy_app.Model.WeatherResponse
-import my.dotton.fuddy_app.R
-import my.dotton.fuddy_app.RetrofitClient
-import my.dotton.fuddy_app.WeatherInterface
 import my.dotton.fuddy_app.databinding.FragmentHomeBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -55,6 +53,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
 
             startLocationUpdates()
+            getCovidData()
         }
     }
 
@@ -118,6 +117,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
 
             override fun onFailure(call: Call<WeatherResponse>, t: Throwable) { Log.d("HomeFragment",t.message?:"통신오류") }
+        })
+    }
+
+    private fun getCovidData(){
+        val covidInterface = RetrofitClient.covidRetrofit.create(CovidInterface::class.java)
+        covidInterface.getCovid(BuildConfig.COVID_API_KEY).enqueue(object :Callback<CovidResponse>{
+            override fun onResponse(call: Call<CovidResponse>, response: Response<CovidResponse>) {
+                if(response.isSuccessful()){
+                    val test = response.body()
+                    //binding.homeTvDecideCnt.text = test.body.items.item[0].
+
+                }
+            }
+
+            override fun onFailure(call: Call<CovidResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
         })
     }
 }

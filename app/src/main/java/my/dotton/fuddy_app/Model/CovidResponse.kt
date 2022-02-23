@@ -1,43 +1,47 @@
 package my.dotton.fuddy_app.Model
 
-data class CovidResponse(
-    val response: Response
-)
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
-data class Response(
+
+@Xml(name="response")
+data class CovidResponse(
+    @Element
     val header: Header,
+    @Element
     val body: Body
 )
 
+@Xml(name="header")
 data class Header(
+    @PropertyElement
     val resultCode:String,
+    @PropertyElement
     val resultMsg:String
 )
+@Xml(name="body")
 data class Body(
+    @Element
     val items:Items,
+    @PropertyElement
     val numOfRows:Int,
+    @PropertyElement
     val pageNo:Int,
+    @PropertyElement
     val totalCount:Int
 )
 
+@Xml(name="items")
 data class Items(
+    @Element
     val item:List<Item>
 )
 
+@Xml(name="item")
 data class Item(
-    val createDt:String,
-    val deathCnt:Int,
-    val defCnt:Int,
-    val gubun:String,
-    val gubunCn:String,
-    val gubunEn:String,
-    val incDec:Int,
-    val isolClearCnt:Int,
-    val isolIngCnt:Int,
-    val localOccCnt:Int,
-    val overFlowCnt:Int,
-    val qurRate:Any,
-    val seq:Int,
-    val stdDay:String,
-    val updateDt:String
+    @PropertyElement
+    val seq:String,
+    @PropertyElement
+    val stateDt:String
 )

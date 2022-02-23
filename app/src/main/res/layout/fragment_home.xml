@@ -75,11 +75,12 @@
                 android:gravity="center">
                 <TextView
                     android:gravity="center"
-                    android:text="확진환자"
+                    android:text="확진자"
                     android:textSize="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
                 <TextView
+                    android:id="@+id/home_tv_decideCnt"
                     android:gravity="center"
                     android:text="1219"
                     android:textSize="18dp"
@@ -101,11 +102,12 @@
                 android:gravity="center">
                 <TextView
                     android:gravity="center"
-                    android:text="격리해제"
+                    android:text="확진률"
                     android:textSize="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
                 <TextView
+                    android:id="@+id/hoem_tv_accDefRate"
                     android:gravity="center"
                     android:text="931"
                     android:textSize="18dp"
@@ -132,6 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
                 <TextView
+                    android:id="@+id/home_tv_accExamCnt"
                     android:gravity="center"
                     android:text="8570"
                     android:textSize="18dp"
@@ -158,6 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
                 <TextView
+                    android:id="@+id/home_tv_deathCnt"
                     android:gravity="center"
                     android:text="1"
                     android:textSize="18dp"
