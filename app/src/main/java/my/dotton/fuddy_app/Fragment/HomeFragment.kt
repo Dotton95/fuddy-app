@@ -3,6 +3,7 @@ package my.dotton.fuddy_app.Fragment
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.*
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -29,6 +31,7 @@ import my.dotton.fuddy_app.databinding.FragmentHomeBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.jar.Manifest
 
@@ -123,15 +126,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun getCovidData(){
         val covidInterface = RetrofitClient.covidRetrofit.create(CovidInterface::class.java)
         covidInterface.getCovid(BuildConfig.COVID_API_KEY).enqueue(object :Callback<CovidResponse>{
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<CovidResponse>, response: Response<CovidResponse>) {
                 if(response.isSuccessful()){
                     val test = response.body() as CovidResponse
 
                     binding.homeTvDecideCnt.text = test.body.items.item[0].decideCnt
-                    binding.homeTvAccDefRate.text = test.body.items.item[0].accDefRate+"%"
-                    binding.homeTvAccExamCnt.text = test.body.items.item[0].accExamCnt
                     binding.homeTvDeathCnt.text = test.body.items.item[0].deathCnt
 
+                    //08-02 00:00 기준
+                    var day = test.body.items.item[0].stateDt
+                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    var time = test.body.items.item[0].stateTime
+                    binding.homeTvStatTime.text = day+" "+time+" 기준"
 
                 }else Log.d("HomeFragment","getCovidData - onResponse : Error code ${response.code()}")
             }
