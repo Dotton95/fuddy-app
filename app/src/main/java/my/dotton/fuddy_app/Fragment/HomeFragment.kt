@@ -118,7 +118,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     binding.homeTvTemp.text = "현재온도 : "+(wResult.main.temp-273.15).toInt().toString()+"℃"
                 }else Log.d("HomeFragment","getWeatherLatLon - onResponse : Error code ${response.code()}")
             }
-
             override fun onFailure(call: Call<WeatherResponse>, t: Throwable) { Log.d("HomeFragment",t.message?:"통신오류") }
         })
     }
@@ -142,9 +141,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
                 }else Log.d("HomeFragment","getCovidData - onResponse : Error code ${response.code()}")
             }
-
             override fun onFailure(call: Call<CovidResponse>, t: Throwable) {Log.d("HomeFragment",t.message?:"통신오류") }
-
         })
     }
 }
