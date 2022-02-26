@@ -31,6 +31,8 @@ import my.dotton.fuddy_app.databinding.FragmentHomeBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DecimalFormat
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.jar.Manifest
@@ -130,12 +132,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 if(response.isSuccessful()){
                     val test = response.body() as CovidResponse
 
-                    binding.homeTvDecideCnt.text = test.body.items.item[0].decideCnt
-                    binding.homeTvDeathCnt.text = test.body.items.item[0].deathCnt
+                    binding.homeTvDecideCnt.text = DecimalFormat("#,###").format(test.body.items.item[0].decideCnt.toInt())
+                    binding.homeTvDeathCnt.text = DecimalFormat("#,###").format(test.body.items.item[0].deathCnt.toInt())
 
-                    //08-02 00:00 기준
-                    var day = test.body.items.item[0].stateDt
-                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    var day = LocalDate.parse(test.body.items.item[0].stateDt,DateTimeFormatter.ofPattern("yyyyMMdd")).toString()
                     var time = test.body.items.item[0].stateTime
                     binding.homeTvStatTime.text = day+" "+time+" 기준"
 
