@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import com.google.android.gms.location.LocationRequest
+import my.dotton.fuddy_app.BuildConfig
 import my.dotton.fuddy_app.Model.WeatherResponse
 import my.dotton.fuddy_app.R
 import my.dotton.fuddy_app.RetrofitClient
@@ -21,6 +22,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.round
 
 class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_weather) {
@@ -41,7 +44,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
                         var lon = round(address.get(0).longitude*100)/100
 
                         binding.weatherTvAddress.text = address.get(0).getAddressLine(0).toString()
-                        
+                        getWeatherLatLonData(lat,lon,BuildConfig.WEATHER_API_KEY)
                     }catch (e:Exception) {binding.tv.text = "잠시후 재시도 해주세요"}
                     return true
                 }
@@ -72,12 +75,38 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
                     binding.weatherTvTemp.text = "현재온도 : "+(wResult.main.temp-273.15).toInt().toString()+"℃"
 
                     binding.weatherTvWindspeedTitle.text = "풍속"
+                    binding.weatherTvWindspeed.text = wResult.wind.speed.toString()+"m/s"
                     
+                    binding.weatherTvHumidityTitle.text = "습도"
+                    binding.weatherTvHumidity.text = wResult.main.humidity.toString()+"%"
+                    
+                    binding.weatherTvBlurTitle.text = "흐림"
+                    binding.weatherTvBlur.text = wResult.clouds.all.toString()+"%"
 
+                    binding.weatherTvPrecipitationTitle.text = "강수량( 1H )"
+                    if(wResult.rain!=null){
+                        var str = wResult.rain.toString()
+                        binding.weatherTvPrecipitation.text = str.substring(8,str.length-1)+"mm"
+                    }else binding.weatherTvPrecipitation.text = "0mm"
 
-                }else Log.d("HomeFragment","getWeatherLatLon - onResponse : Error code ${response.code()}")
+                    binding.weatherTvSnowloadTitle.text = "적설량( 1H )"
+                    if(wResult.snow!=null){
+                        var str2 = wResult.snow.toString()
+                        binding.weatherTvSnowload.text = str2.substring(8,str2.length-1)+"mm"
+                    }else binding.weatherTvSnowload.text = "0mm"
+
+                    val format = SimpleDateFormat("HH:mm")
+                    format.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+
+                    binding.weatherTvSunriseTitle.text = "일출시간"
+                    binding.weatherTvSunrise.text = format.format(Date(wResult.sys.sunrise.toLong()*1000))
+
+                    binding.weatherTvSunsetTitle.text = "일몰시간"
+                    binding.weatherTvSunset.text = format.format(Date(wResult.sys.sunset.toLong()*1000))
+
+                }else Log.d("WeatherFragment","getWeatherLatLon - onResponse : Error code ${response.code()}")
             }
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) { Log.d("HomeFragment",t.message?:"통신오류") }
+            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) { Log.d("WeatherFragment",t.message?:"통신오류") }
         })
     }
 
