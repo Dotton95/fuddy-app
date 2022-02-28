@@ -1,19 +1,15 @@
 package my.dotton.fuddy_app.Fragment
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.location.Address
 import android.location.Geocoder
-import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
-import com.google.android.gms.location.LocationRequest
 import my.dotton.fuddy_app.BuildConfig
+import my.dotton.fuddy_app.Model.Item
+import my.dotton.fuddy_app.Model.Weather
 import my.dotton.fuddy_app.Model.WeatherResponse
+import my.dotton.fuddy_app.Model.WeatherResponse2
 import my.dotton.fuddy_app.R
 import my.dotton.fuddy_app.RetrofitClient
 import my.dotton.fuddy_app.WeatherInterface
@@ -112,7 +108,26 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
 
     //3시간별 기상정보
     private fun getTimeWeatherLatLonData(lat:Double, lon:Double, key:String){
+        val weatherInterface = RetrofitClient.weatherRetrofit.create(WeatherInterface::class.java)
+        weatherInterface.getTimeWeatherLatlon(lat.toString(),lon.toString(),key).enqueue(object :Callback<WeatherResponse2>{
+            override fun onResponse(call: Call<WeatherResponse2>,response: Response<WeatherResponse2>) {
+                if(response.isSuccessful){
+                    val result = response.body() as WeatherResponse2
+                    data class Item(var weather:Int,var temp:String,var time:String)
+                    var itemList = ArrayList<Item>()
 
+                    for(i in 3..10){
+                        var w = result.list[i].weather[0].id
+                        var t = (result.list[i].main.temp - 273.15).toInt().toString()+"도"
+                        var t2 = result.list[i].dt_txt.substring(10,result.list[i].dt_txt.length-3)
+                        itemList.add(Item(w,t,t2))
+                    }
+
+                }
+
+            }
+            override fun onFailure(call: Call<WeatherResponse2>, t: Throwable) {Log.d("WeatherFragment",t.message?:"통신오류")}
+        })
     }
 
 
