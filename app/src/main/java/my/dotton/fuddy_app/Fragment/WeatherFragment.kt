@@ -3,16 +3,15 @@ package my.dotton.fuddy_app.Fragment
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.location.Geocoder
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
-import my.dotton.fuddy_app.BuildConfig
+import androidx.recyclerview.widget.LinearLayoutManager
+import my.dotton.fuddy_app.*
 import my.dotton.fuddy_app.Model.Item
 import my.dotton.fuddy_app.Model.Weather
 import my.dotton.fuddy_app.Model.WeatherResponse
 import my.dotton.fuddy_app.Model.WeatherResponse2
-import my.dotton.fuddy_app.R
-import my.dotton.fuddy_app.RetrofitClient
-import my.dotton.fuddy_app.WeatherInterface
 import my.dotton.fuddy_app.databinding.FragmentWeatherBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,6 +22,8 @@ import java.util.*
 import kotlin.math.round
 
 class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_weather) {
+
+    data class Item(var weather:Int,var temp:String,var time:String)
 
     override fun initView() {
         super.initView()
@@ -41,7 +42,11 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
 
                         binding.weatherTvAddress.text = address.get(0).getAddressLine(0).toString()
                         getWeatherLatLonData(lat,lon,BuildConfig.WEATHER_API_KEY)
-                    }catch (e:Exception) {binding.tv.text = "잠시후 재시도 해주세요"}
+                        getTimeWeatherLatLonData(lat,lon,BuildConfig.WEATHER_API_KEY)
+
+                    }catch (e:Exception) {
+                        viewReset("검색 결과가 없습니다")
+                    }
                     return true
                 }
 
@@ -53,6 +58,8 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
     }
     //검색한 위치 기상 정보
     private fun getWeatherLatLonData(lat:Double, lon:Double, key:String){
+        binding.weatherTvResult.visibility = View.INVISIBLE
+
         val weatherInterface = RetrofitClient.weatherRetrofit.create(WeatherInterface::class.java)
         weatherInterface.getWeatherLatlon(lat.toString(),lon.toString(),key).enqueue(object :
             Callback<WeatherResponse> {
@@ -100,9 +107,15 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
                     binding.weatherTvSunsetTitle.text = "일몰시간"
                     binding.weatherTvSunset.text = format.format(Date(wResult.sys.sunset.toLong()*1000))
 
-                }else Log.d("WeatherFragment","getWeatherLatLon - onResponse : Error code ${response.code()}")
+                }else{
+                    viewReset("잠시후 재시도 해주세요")
+                    Log.d("WeatherFragment","getWeatherLatLon - onResponse : Error code ${response.code()}")
+                }
             }
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) { Log.d("WeatherFragment",t.message?:"통신오류") }
+            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                viewReset("잠시후 재시도 해주세요")
+                Log.d("WeatherFragment",t.message?:"통신오류")
+            }
         })
     }
 
@@ -113,7 +126,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
             override fun onResponse(call: Call<WeatherResponse2>,response: Response<WeatherResponse2>) {
                 if(response.isSuccessful){
                     val result = response.body() as WeatherResponse2
-                    data class Item(var weather:Int,var temp:String,var time:String)
+
                     var itemList = ArrayList<Item>()
 
                     for(i in 3..10){
@@ -122,13 +135,47 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
                         var t2 = result.list[i].dt_txt.substring(10,result.list[i].dt_txt.length-3)
                         itemList.add(Item(w,t,t2))
                     }
+                    val adapter = WeatherChartAdapter(requireContext(),itemList)
+                    val layout = LinearLayoutManager(requireContext())
+                    layout.orientation = LinearLayoutManager.HORIZONTAL
+                    binding.weatherRvChart.layoutManager = layout
+                    binding.weatherRvChart.adapter = adapter
+                    binding.weatherRvChart.visibility = View.VISIBLE
 
-                }
-
+                }else Log.d("WeatherFragment","getTimeWeatherLatLonData - onResponse : Error code ${response.code()}")
             }
             override fun onFailure(call: Call<WeatherResponse2>, t: Throwable) {Log.d("WeatherFragment",t.message?:"통신오류")}
         })
     }
+    //화면 클리어
+    fun viewReset(msg:String){
+        binding.weatherTvResult.text = msg
+        binding.weatherTvAddress.text = ""
+        binding.weatherTvResult.visibility = View.VISIBLE
+        binding.weatherIvIcon.setImageResource(0)
+        binding.weatherTvTemp.text = ""
+        binding.weatherTvWindspeedTitle.text = ""
+        binding.weatherTvWindspeed.text = ""
 
+        binding.weatherTvHumidityTitle.text = ""
+        binding.weatherTvHumidity.text = ""
+
+        binding.weatherTvBlurTitle.text = ""
+        binding.weatherTvBlur.text = ""
+
+        binding.weatherTvPrecipitationTitle.text = ""
+        binding.weatherTvPrecipitation.text = ""
+
+        binding.weatherTvSnowloadTitle.text = ""
+        binding.weatherTvSnowload.text = ""
+
+        binding.weatherTvSunriseTitle.text = ""
+        binding.weatherTvSunrise.text = ""
+
+        binding.weatherTvSunsetTitle.text = ""
+        binding.weatherTvSunset.text = ""
+
+        binding.weatherRvChart.visibility = View.INVISIBLE
+    }
 
 }
