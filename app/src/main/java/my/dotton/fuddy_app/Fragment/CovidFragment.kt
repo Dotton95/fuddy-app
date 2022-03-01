@@ -9,11 +9,10 @@ import my.dotton.fuddy_app.R
 import my.dotton.fuddy_app.databinding.FragmentCovidBinding
 
 class CovidFragment : BaseFragment<FragmentCovidBinding>(R.layout.fragment_covid) {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+    override fun initView() {
+        super.initView()
+        binding.apply {
+
+        }
     }
 }
