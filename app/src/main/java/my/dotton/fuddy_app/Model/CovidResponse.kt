@@ -35,11 +35,11 @@ data class Body(
 @Xml(name="items")
 data class Items(
     @Element
-    val item:List<Item>
+    val item:List<Item_covid1>
 )
 
 @Xml(name="item")
-data class Item(
+data class Item_covid1(
     //등록일시
     @PropertyElement(name = "createDt")
     val createDt: String,
