@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/covid_tv_defCntTitle"
-            android:text="누적확진자"
+            android:text="누적 확진자"
             android:textSize="30dp"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/covid_spinner"
@@ -77,8 +77,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:id="@+id/covid_tv_isolingCntTitle"
-            android:text="격리중"
+            android:id="@+id/covid_tv_overFlowCntTitle"
+            android:text="해외유입 수"
             android:textSize="30dp"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/covid_tv_inDecTitle"
@@ -88,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:id="@+id/covid_tv_isolingCnt"
+            android:id="@+id/covid_tv_overFlowCnt"
             tools:text="86명"
             android:textSize="30dp"
             android:textColor="@color/black"
@@ -100,22 +100,22 @@
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/covid_tv_isolClearCntTitle"
-            android:text="누적 격리해제"
+            android:id="@+id/covid_tv_localOccTitle"
+            android:text="지역발생 수 "
             android:textSize="30dp"
             android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/covid_tv_isolingCntTitle"
+            app:layout_constraintTop_toBottomOf="@id/covid_tv_overFlowCntTitle"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:id="@+id/covid_tv_isolClearCnt"
+            android:id="@+id/covid_tv_localOccCnt"
             tools:text="61명"
             android:textSize="30dp"
             android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/covid_tv_isolingCnt"
+            app:layout_constraintTop_toBottomOf="@id/covid_tv_overFlowCnt"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="30dp"
             android:layout_marginRight="30dp"
@@ -127,7 +127,7 @@
             android:text="사망자"
             android:textSize="30dp"
             android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/covid_tv_isolClearCntTitle"
+            app:layout_constraintTop_toBottomOf="@id/covid_tv_localOccTitle"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
@@ -138,7 +138,7 @@
             tools:text="2명"
             android:textSize="30dp"
             android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/covid_tv_isolClearCnt"
+            app:layout_constraintTop_toBottomOf="@id/covid_tv_localOccCnt"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="30dp"
             android:layout_marginRight="30dp"
