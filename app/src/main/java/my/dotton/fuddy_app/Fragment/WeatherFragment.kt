@@ -8,7 +8,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import my.dotton.fuddy_app.*
-import my.dotton.fuddy_app.Model.Item
 import my.dotton.fuddy_app.Model.Weather
 import my.dotton.fuddy_app.Model.WeatherResponse
 import my.dotton.fuddy_app.Model.WeatherResponse2

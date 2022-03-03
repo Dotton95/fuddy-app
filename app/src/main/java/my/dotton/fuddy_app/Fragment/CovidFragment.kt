@@ -1,12 +1,16 @@
 package my.dotton.fuddy_app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import my.dotton.fuddy_app.BuildConfig
 import my.dotton.fuddy_app.CovidInterface
 import my.dotton.fuddy_app.Model.CovidResponse2
 import my.dotton.fuddy_app.R
@@ -17,8 +21,18 @@ import retrofit2.Callback
 
 import retrofit2.Response
 import retrofit2.create
+import java.text.DecimalFormat
 
 class CovidFragment : BaseFragment<FragmentCovidBinding>(R.layout.fragment_covid) {
+
+    lateinit var fadeInAnim:Animation
+    lateinit var fadeInAnim2:Animation
+    lateinit var fadeInAnim3:Animation
+    lateinit var fadeInAnim4:Animation
+    lateinit var fadeInAnim5:Animation
+    lateinit var fadeInAnim6:Animation
+
+
     override fun initView() {
         super.initView()
         binding.apply {
@@ -27,14 +41,16 @@ class CovidFragment : BaseFragment<FragmentCovidBinding>(R.layout.fragment_covid
             )
             binding.covidSpinner.adapter = ArrayAdapter(requireContext(),R.layout.spinner_custom,spinnerList)
 
+
+
+
+
+
             binding.covidSpinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
+                    getSidoCovid(BuildConfig.COVID_API_KEY,spinnerList[position])
                 }
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
-
+                override fun onNothingSelected(parent: AdapterView<*>?) { getSidoCovid(BuildConfig.COVID_API_KEY,"서울") }
             }
         }
     }
@@ -69,23 +85,53 @@ class CovidFragment : BaseFragment<FragmentCovidBinding>(R.layout.fragment_covid
             override fun onResponse(call: Call<CovidResponse2>, response: Response<CovidResponse2>) {
                 if(response.isSuccessful){
                     val result = response.body() as CovidResponse2
-                    binding.covidTvDefCnt.text = result.body.items.item[sidoCode].defCnt.plus("명")
-                    binding.covidTvInDec.text = result.body.items.item[sidoCode].incDec.plus("명")
-                    binding.covidTvOverFlowCnt.text = result.body.items.item[sidoCode].overFlowCnt.plus("명")
-                    binding.covidTvLocalOccTitle.text = result.body.items.item[sidoCode].localOccCnt.plus("명")
-                    binding.covidTvDeathCnt.text = result.body.items.item[sidoCode].deathCnt.plus("명")
-                    binding.covidTvQurRate.text = result.body.items.item[sidoCode].qurRate.plus("명")
-                }else{
 
+                    binding.covidTvDefCnt.text = decimalFormat(result.body.items.item[sidoCode].defCnt).plus("명")
+                    binding.covidTvInDec.text = decimalFormat(result.body.items.item[sidoCode].incDec).plus("명")
+                    binding.covidTvOverFlowCnt.text = decimalFormat(result.body.items.item[sidoCode].overFlowCnt).plus("명")
+                    binding.covidTvLocalOccCnt.text = decimalFormat(result.body.items.item[sidoCode].localOccCnt).plus("명")
+                    binding.covidTvDeathCnt.text = decimalFormat(result.body.items.item[sidoCode].deathCnt).plus("명")
+                    binding.covidTvQurRate.text = decimalFormat(result.body.items.item[sidoCode].qurRate).plus("명")
+
+                    viewAnim()
+                }else{
+                    Log.d("CovidFragment","getSidoCovid - onResponse : Error code ${response.code()}")
                 }
             }
-
-            override fun onFailure(call: Call<CovidResponse2>, t: Throwable) {
-            }
+            override fun onFailure(call: Call<CovidResponse2>, t: Throwable) {Log.d("CovidFragment",t.message?:"통신오류")}
         })
-
     }
 
+    private fun decimalFormat(input:String) : String{
+        return DecimalFormat("#,###").format(input.toInt())
+    }
+    private fun viewAnim(){
+        fadeInAnim = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in)
+        fadeInAnim2 = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in2)
+        fadeInAnim3 = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in3)
+        fadeInAnim4 = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in4)
+        fadeInAnim5 = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in5)
+        fadeInAnim6 = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in6)
+
+        binding.covidTvQurRateTitle.visibility = View.VISIBLE
+        binding.covidTvInDecTitle.visibility = View.VISIBLE
+        binding.covidTvOverFlowCntTitle.visibility = View.VISIBLE
+        binding.covidTvLocalOccTitle.visibility = View.VISIBLE
+        binding.covidTvDeathCntTitle.visibility = View.VISIBLE
+        binding.covidTvQurRateTitle.visibility = View.VISIBLE
 
 
+        binding.covidTvDefCntTitle.startAnimation(fadeInAnim)
+        binding.covidTvDefCnt.startAnimation(fadeInAnim)
+        binding.covidTvInDecTitle.startAnimation(fadeInAnim2)
+        binding.covidTvInDec.startAnimation(fadeInAnim2)
+        binding.covidTvOverFlowCntTitle.startAnimation(fadeInAnim3)
+        binding.covidTvOverFlowCnt.startAnimation(fadeInAnim3)
+        binding.covidTvLocalOccTitle.startAnimation(fadeInAnim4)
+        binding.covidTvLocalOccCnt.startAnimation(fadeInAnim4)
+        binding.covidTvDeathCntTitle.startAnimation(fadeInAnim5)
+        binding.covidTvDeathCnt.startAnimation(fadeInAnim5)
+        binding.covidTvQurRateTitle.startAnimation(fadeInAnim6)
+        binding.covidTvQurRate.startAnimation(fadeInAnim6)
+    }
 }
