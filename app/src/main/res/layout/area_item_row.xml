@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+        <TextView
+            android:id="@+id/areaItem_tv_name"
+            tools:text="큰자기는별걸다봐"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            tools:text="2021-12-31 ~ 2022-12-31"
+            app:layout_constraintLeft_toRightOf="@id/areaItem_tv_name"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/areaItem_btn_arrow"
+            android:id="@+id/areaItem_tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageButton
+            android:id="@+id/areaItem_btn_arrow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--    //    type json-->
+<!--    //-->
+<!--    //    prmisnZoneNm 허가구역명-->
+<!--    //    ctprvnNm  시도명-->
+<!--    //    signguNm 시군구명-->
+<!--    //    lnmadr 소재지지번주소-->
+<!--    //    latitude 위도-->
+<!--    //    longitude 경도-->
+<!--    //    vhcleCo 푸드트럭운영대수-->
+<!--    //    primsnZoneRntfee 허가구역 사용료-->
+<!--    //    beginDate 허가구역운영시작일자-->
+<!--    //    endDate 허가구역운영종료일자-->
+<!--    //    rstde 허가구역휴무일-->
+<!--    //    weekdayOperOpenHhmm 허가구역평일운영시작시각-->
+<!--    //    weekdayOperColseHhmm 허가구역평일운영종료시각-->
+<!--    //    wkendOperOpenHhmm 허가구역주말운영시작시각-->
+<!--    //    wkendOperColseHhmm 허가구역주말운영종료시각-->
+<!--    //    lmttPrdlst 판매제한품목-->
+<!--    //    institutionNm 관리기관명-->
+<!--    //    phoneNumber 관리기관 전화번호-->
+<!--    //    referenceDate 데이터 기준일자-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/areaItem_expandedLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
