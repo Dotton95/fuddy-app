@@ -57,6 +57,7 @@
 <!--    //    phoneNumber 관리기관 전화번호-->
 <!--    //    referenceDate 데이터 기준일자-->
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/areaItem_expandedLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -132,52 +133,62 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <TextView
-                android:text="경기도 하남시 대청로 79"
+                android:id="@+id/areaITem_tv_ZoneNm"
+                tools:text="경기도 하남시 대청로 79"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="1대"
+                android:id="@+id/areaItem_tv_vhcleCo"
+                tools:text="1대"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="100,000원"
+                android:id="@+id/areaItem_tv_zoneRntFree"
+                tools:text="100,000원"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="10:00 ~ 17:00"
+                android:id="@+id/areaItem_tv_weekdayTime"
+                tools:text="10:00 ~ 17:00"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="10:00 ~ 12:00"
+                android:id="@+id/areaItem_tv_wkendTime"
+                tools:text="10:00 ~ 12:00"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="공휴일"
+                android:id="@+id/areaItem_tv_rstde"
+                tools:text="공휴일"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="술,담배"
+                android:id="@+id/areaItem_tv_lmttPrdlst"
+                tools:text="술,담배"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="경기도청"
+                android:id="@+id/areaItem_tv_institutionNm"
+                tools:text="경기도청"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="010-1111-1111"
+                android:id="@+id/areaItem_tv_phoneNumber"
+                tools:text="010-1111-1111"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="2021-01-01"
+                android:id="@+id/areaItem_tv_referenceDate"
+                tools:text="2021-01-01"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
