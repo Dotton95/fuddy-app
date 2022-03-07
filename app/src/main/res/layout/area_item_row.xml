@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
 <LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -35,27 +36,6 @@
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
-<!--    //    type json-->
-<!--    //-->
-<!--    //    prmisnZoneNm 허가구역명-->
-<!--    //    ctprvnNm  시도명-->
-<!--    //    signguNm 시군구명-->
-<!--    //    lnmadr 소재지지번주소-->
-<!--    //    latitude 위도-->
-<!--    //    longitude 경도-->
-<!--    //    vhcleCo 푸드트럭운영대수-->
-<!--    //    primsnZoneRntfee 허가구역 사용료-->
-<!--    //    beginDate 허가구역운영시작일자-->
-<!--    //    endDate 허가구역운영종료일자-->
-<!--    //    rstde 허가구역휴무일-->
-<!--    //    weekdayOperOpenHhmm 허가구역평일운영시작시각-->
-<!--    //    weekdayOperColseHhmm 허가구역평일운영종료시각-->
-<!--    //    wkendOperOpenHhmm 허가구역주말운영시작시각-->
-<!--    //    wkendOperColseHhmm 허가구역주말운영종료시각-->
-<!--    //    lmttPrdlst 판매제한품목-->
-<!--    //    institutionNm 관리기관명-->
-<!--    //    phoneNumber 관리기관 전화번호-->
-<!--    //    referenceDate 데이터 기준일자-->
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/areaItem_expandedLayout"
@@ -194,5 +174,5 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>
+</layout>
