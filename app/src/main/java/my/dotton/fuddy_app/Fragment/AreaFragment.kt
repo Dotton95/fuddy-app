@@ -1,13 +1,18 @@
 package my.dotton.fuddy_app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import my.dotton.fuddy_app.AreaItem
-import my.dotton.fuddy_app.R
+import my.dotton.fuddy_app.*
+import my.dotton.fuddy_app.Model.AreaResponse
+import my.dotton.fuddy_app.Model.CovidResponse2
 import my.dotton.fuddy_app.databinding.FragmentAreaBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
@@ -38,5 +43,20 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
         binding.apply {
             val itemList = ArrayList<AreaItem>()
         }
+    }
+    private fun getAreaData(key:String){
+        val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
+        areaInterface.getAreaData("xml",key).enqueue(object : Callback<AreaResponse> {
+            override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
+                if(response.isSuccessful){
+                    val result = response.body() as AreaResponse
+
+                }else{
+                    Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<AreaResponse>, t: Throwable) {
+                Log.d("AreaFragment",t.message?:"통신오류")}
+        })
     }
 }

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     private const val WEATHER_URL = "https://api.openweathermap.org/data/2.5/"
     private const val COVID_URL = "http://openapi.data.go.kr/openapi/service/rest/Covid19/"
+    private const val AREA_URL  = "http://api.data.go.kr/openapi/"
 
     private fun initRetrofit(base_url:String, factory: Converter.Factory):Retrofit{
         //
@@ -34,4 +35,5 @@ object RetrofitClient {
     }
     val weatherRetrofit: Retrofit = initRetrofit(WEATHER_URL, GsonConverterFactory.create())
     val covidRetrofit: Retrofit = initRetrofit(COVID_URL, TikXmlConverterFactory.create(TikXml.Builder().exceptionOnUnreadXml(false).build()))
+    val areaRetrofit: Retrofit = initRetrofit(AREA_URL, TikXmlConverterFactory.create(TikXml.Builder().exceptionOnUnreadXml(false).build()))
 }
