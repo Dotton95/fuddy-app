@@ -1,14 +1,10 @@
 package my.dotton.fuddy_app.Fragment
 
-import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import my.dotton.fuddy_app.*
 import my.dotton.fuddy_app.Model.AreaResponse
-import my.dotton.fuddy_app.Model.CovidResponse2
 import my.dotton.fuddy_app.databinding.FragmentAreaBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -38,10 +34,32 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 //    phoneNumber 관리기관 전화번호
 //    referenceDate 데이터 기준일자
 
+    private lateinit var areaAdapter:ExpandableAdapter
+    val itemList = ArrayList<AreaItem>()
+
     override fun initView() {
         super.initView()
         binding.apply {
-            val itemList = ArrayList<AreaItem>()
+
+            getAreaData(BuildConfig.COVID_API_KEY)
+
+            binding.areaRv.layoutManager = LinearLayoutManager(context)
+            areaAdapter = ExpandableAdapter(requireContext(),itemList)
+            binding.areaRv.adapter = areaAdapter
+
+            binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    //화면에 보이는 마지막 아이템의 포지션
+                    val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+                    val itemTotalCount = recyclerView.adapter!!.itemCount - 1
+                    //스크롤이 끝에 도달했다면
+                    if(lastVisibleItemPosition == itemTotalCount){
+                        
+                    }
+
+                }
+            })
         }
     }
     private fun getAreaData(key:String){
@@ -51,6 +69,12 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                 if(response.isSuccessful){
                     val result = response.body() as AreaResponse
 
+                    for(i in 0..result.body.totalCount-1){
+                        var item = AreaItem()
+                        item.name = result.body.items.item[i].prmisnZoneNm
+                        item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
+                        itemList.add(item)
+                    }
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")
                 }

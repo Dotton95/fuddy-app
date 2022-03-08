@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.*
 import my.dotton.fuddy_app.databinding.AreaItemRowBinding
+import my.dotton.fuddy_app.databinding.LoadingItemBinding
 import my.dotton.fuddy_app.databinding.WeatherchartItemBinding
 
 //    prmisnZoneNm 허가구역명
@@ -34,9 +36,15 @@ data class AreaItem(
     var date:String = "",
     var isExpanded:Boolean = false
 )
-class ExpandableAdapter(private val context: Context, private val itemList:List<AreaItem>):RecyclerView.Adapter<ExpandableAdapter.ExpandableViewHolder>() {
-    class ExpandableViewHolder(val binding: AreaItemRowBinding):RecyclerView.ViewHolder(binding.root){
-        fun bind(areaItem:AreaItem,position:Int,context: Context){
+
+class ExpandableAdapter(private val context: Context, private val itemList:ArrayList<AreaItem>): Adapter<RecyclerView.ViewHolder>() {
+
+    private val VIEW_TYPE_ITEM = 0
+    private val VIEW_TYPE_LOADING = 1
+
+
+    class ExpandableViewHolder(val binding: AreaItemRowBinding): ViewHolder(binding.root){
+        fun bind(areaItem:AreaItem,position:Int){
             binding.areaItemTvName.text = areaItem.name
             binding.areaItemTvDate.text = areaItem.date
             binding.areaItemBtnArrow.setOnClickListener {
@@ -51,18 +59,44 @@ class ExpandableAdapter(private val context: Context, private val itemList:List<
             return isExpanded
         }
     }
+    class LoadingViewHolder(private  val binding:LoadingItemBinding) : ViewHolder(binding.root){}
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpandableViewHolder {
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        var binding  = AreaItemRowBinding.inflate(inflater,parent,false)
-        return ExpandableViewHolder(binding)
+    override fun getItemViewType(position: Int): Int {
+        //게시물과 로딩아이템의 기준 아이템 이름이 없을경우 로딩아이템
+        return when(itemList[position].name){
+            "" -> VIEW_TYPE_LOADING
+            else -> VIEW_TYPE_ITEM
+        }
     }
-
-    override fun onBindViewHolder(holder: ExpandableViewHolder, position: Int) {
-        holder.bind(itemList[position],position,context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when(viewType){
+            VIEW_TYPE_ITEM ->{
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val binding  = AreaItemRowBinding.inflate(inflater,parent,false)
+                ExpandableViewHolder(binding)
+            }
+            else ->{
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val binding  = LoadingItemBinding.inflate(inflater,parent,false)
+                LoadingViewHolder(binding)
+            }
+        }
     }
-
     override fun getItemCount(): Int {
         return itemList.size
     }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if(holder is ExpandableViewHolder){
+            holder.bind(itemList[position],position)
+        }else {}
+    }
+    fun setList(item:MutableList<AreaItem>){
+        itemList.addAll(item)
+        itemList.add(AreaItem("",""))//progress bar
+    }
+    fun deleteLoading(){
+        itemList.removeAt(itemList.lastIndex)//로딩완료시 프로그래스바 지움
+    }
+
 }

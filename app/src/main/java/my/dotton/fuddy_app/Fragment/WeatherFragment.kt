@@ -48,7 +48,6 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(R.layout.fragment_w
                     }
                     return true
                 }
-
                 override fun onQueryTextChange(newText: String?): Boolean { return true }
             })
 
