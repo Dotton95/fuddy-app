@@ -47,6 +47,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
             areaAdapter = ExpandableAdapter(requireContext(),itemList)
             binding.areaRv.adapter = areaAdapter
 
+
             binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
