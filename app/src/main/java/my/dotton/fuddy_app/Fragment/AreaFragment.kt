@@ -36,6 +36,11 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
     private lateinit var areaAdapter:ExpandableAdapter
     val itemList = ArrayList<AreaItem>()
+    
+    private var totalCount = 0 //전체 아이템 개수
+    private var isNext = false //다음 페이지 유무
+    private var page = 0 //현재 페이지
+    private var limit = 10 //한 번에 가져올 아이템 수
 
     override fun initView() {
         super.initView()
@@ -65,7 +70,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     }
     private fun getAreaData(key:String){
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
-        areaInterface.getAreaData("xml",key).enqueue(object : Callback<AreaResponse> {
+        areaInterface.getAreaData(0,limit,"xml",key,"서울특별시").enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if(response.isSuccessful){
                     val result = response.body() as AreaResponse

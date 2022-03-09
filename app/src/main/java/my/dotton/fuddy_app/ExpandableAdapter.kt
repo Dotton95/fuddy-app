@@ -39,9 +39,10 @@ data class AreaItem(
 
 class ExpandableAdapter(private val context: Context, private val itemList:ArrayList<AreaItem>): Adapter<RecyclerView.ViewHolder>() {
 
-    private val VIEW_TYPE_ITEM = 0
-    private val VIEW_TYPE_LOADING = 1
-
+    companion object{
+        private val VIEW_TYPE_ITEM = 0
+        private val VIEW_TYPE_LOADING = 1
+    }
 
     class ExpandableViewHolder(val binding: AreaItemRowBinding): ViewHolder(binding.root){
         fun bind(areaItem:AreaItem,position:Int){
