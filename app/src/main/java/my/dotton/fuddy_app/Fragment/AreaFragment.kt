@@ -63,7 +63,6 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     if(lastVisibleItemPosition == itemTotalCount){
                         
                     }
-
                 }
             })
         }
