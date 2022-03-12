@@ -1,6 +1,8 @@
 package my.dotton.fuddy_app
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +46,30 @@ class ExpandableAdapter(private val context: Context, private val itemList:Array
         private val VIEW_TYPE_LOADING = 1
     }
 
+    //검색 이후 아이템 세팅
+    fun setItems(areaItems: List<AreaItem>){
+        this.itemList.apply {
+            clear()
+            addAll(areaItems)
+        }
+        notifyDataSetChanged()
+    }
+
+    //프로그램스바 이후  아이템 넣기
+    fun addItems(areaItems: List<AreaItem>){
+        this.itemList.addAll((areaItems))
+        notifyDataSetChanged()
+    }
+    fun setLoadingView(b:Boolean){
+        if(b){
+            Handler(Looper.getMainLooper()).post {
+                this.itemList.add(AreaItem("",""))
+                notifyItemInserted(itemList.size - 1)
+            }
+        }
+    }
+
+    
     class ExpandableViewHolder(val binding: AreaItemRowBinding): ViewHolder(binding.root){
         fun bind(areaItem:AreaItem,position:Int){
             binding.areaItemTvName.text = areaItem.name
