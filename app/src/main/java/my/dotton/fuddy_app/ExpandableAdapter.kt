@@ -45,31 +45,21 @@ class ExpandableAdapter(private val context: Context, private val itemList:Array
         private val VIEW_TYPE_ITEM = 0
         private val VIEW_TYPE_LOADING = 1
     }
-
-    //검색 이후 아이템 세팅
-    fun setItems(areaItems: List<AreaItem>){
-        this.itemList.apply {
-            clear()
-            addAll(areaItems)
-        }
-        notifyDataSetChanged()
-    }
-
-    //프로그램스바 이후  아이템 넣기
-    fun addItems(areaItems: List<AreaItem>){
-        this.itemList.addAll((areaItems))
-        notifyDataSetChanged()
-    }
-    fun setLoadingView(b:Boolean){
-        if(b){
-            Handler(Looper.getMainLooper()).post {
-                this.itemList.add(AreaItem("",""))
-                notifyItemInserted(itemList.size - 1)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when(viewType){
+            VIEW_TYPE_ITEM ->{
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val binding  = AreaItemRowBinding.inflate(inflater,parent,false)
+                ExpandableViewHolder(binding)
+            }
+            else ->{
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val binding  = LoadingItemBinding.inflate(inflater,parent,false)
+                LoadingViewHolder(binding)
             }
         }
     }
 
-    
     class ExpandableViewHolder(val binding: AreaItemRowBinding): ViewHolder(binding.root){
         fun bind(areaItem:AreaItem,position:Int){
             binding.areaItemTvName.text = areaItem.name
@@ -95,20 +85,7 @@ class ExpandableAdapter(private val context: Context, private val itemList:Array
             else -> VIEW_TYPE_ITEM
         }
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return when(viewType){
-            VIEW_TYPE_ITEM ->{
-                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val binding  = AreaItemRowBinding.inflate(inflater,parent,false)
-                ExpandableViewHolder(binding)
-            }
-            else ->{
-                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val binding  = LoadingItemBinding.inflate(inflater,parent,false)
-                LoadingViewHolder(binding)
-            }
-        }
-    }
+
     override fun getItemCount(): Int {
         return itemList.size
     }
@@ -118,12 +95,4 @@ class ExpandableAdapter(private val context: Context, private val itemList:Array
             holder.bind(itemList[position],position)
         }else {}
     }
-    fun setList(item:MutableList<AreaItem>){
-        itemList.addAll(item)
-        itemList.add(AreaItem("",""))//progress bar
-    }
-    fun deleteLoading(){
-        itemList.removeAt(itemList.lastIndex)//로딩완료시 프로그래스바 지움
-    }
-
 }

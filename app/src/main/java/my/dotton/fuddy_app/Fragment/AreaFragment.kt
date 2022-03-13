@@ -1,5 +1,7 @@
 package my.dotton.fuddy_app.Fragment
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +41,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     
     private var totalCount = 0 //전체 아이템 개수
     private var isNext = false //다음 페이지 유무
+    private var totalPage = 0//총 페이지 수
     private var page = 0 //현재 페이지
     private var limit = 10 //한 번에 가져올 아이템 수
 
@@ -61,7 +64,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     val itemTotalCount = recyclerView.adapter!!.itemCount - 1
                     //스크롤이 끝에 도달했다면
                     if(lastVisibleItemPosition == itemTotalCount){
-                        
+                        loadMore()
                     }
                 }
             })
@@ -69,10 +72,14 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     }
     private fun getAreaData(key:String){
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
-        areaInterface.getAreaData(0,limit,"xml",key,"서울특별시").enqueue(object : Callback<AreaResponse> {
+        areaInterface.getAreaData(page,limit,"xml",key,"서울특별시").enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if(response.isSuccessful){
                     val result = response.body() as AreaResponse
+
+                    totalCount = result.body.totalCount
+                    page = result.body.pageNo
+                    totalPage = totalCount/limit + 1
 
                     for(i in 0..result.body.totalCount-1){
                         var item = AreaItem()
@@ -87,5 +94,18 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
             override fun onFailure(call: Call<AreaResponse>, t: Throwable) {
                 Log.d("AreaFragment",t.message?:"통신오류")}
         })
+    }
+    fun loadMore(){
+        itemList.add(AreaItem("",""))
+        areaAdapter.notifyItemInserted(itemList.size - 1)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            itemList.removeAt(itemList.size - 1)
+            var scrollPosition = itemList.size
+            areaAdapter.notifyItemRemoved(scrollPosition)
+            page++
+            getAreaData(BuildConfig.COVID_API_KEY)
+            areaAdapter.notifyDataSetChanged()
+        },1000)
     }
 }
