@@ -37,7 +37,8 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 //    referenceDate 데이터 기준일자
 
     private lateinit var areaAdapter:ExpandableAdapter
-    val itemList = ArrayList<AreaItem>()
+
+
     
     private var totalCount = 0 //전체 아이템 개수
     private var isNext = false //다음 페이지 유무
@@ -48,15 +49,8 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     override fun initView() {
         super.initView()
         binding.apply {
-
             getAreaData(BuildConfig.COVID_API_KEY)
-
-            binding.areaRv.layoutManager = LinearLayoutManager(context)
-            areaAdapter = ExpandableAdapter(requireContext(),itemList)
-            binding.areaRv.adapter = areaAdapter
-
-
-            binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
+            /*binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     //화면에 보이는 마지막 아이템의 포지션
@@ -67,7 +61,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                         loadMore()
                     }
                 }
-            })
+            })*/
         }
     }
     private fun getAreaData(key:String){
@@ -76,17 +70,22 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if(response.isSuccessful){
                     val result = response.body() as AreaResponse
-
+                    var itemList = ArrayList<AreaItem>()
                     totalCount = result.body.totalCount
                     page = result.body.pageNo
                     totalPage = totalCount/limit + 1
 
-                    for(i in 0..result.body.totalCount-1){
+                    for(i in 0 until 10){
                         var item = AreaItem()
-                        item.name = result.body.items.item[i].prmisnZoneNm
+                        item.name = result.body.items.item[i].prmisnZoneNm+""
                         item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
                         itemList.add(item)
                     }
+                    Log.d("dotton",itemList[0].name)
+                    binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
+                    areaAdapter = ExpandableAdapter(requireContext(),itemList)
+                    binding.areaRv.adapter = areaAdapter
+
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")
                 }
@@ -95,17 +94,17 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                 Log.d("AreaFragment",t.message?:"통신오류")}
         })
     }
-    fun loadMore(){
-        itemList.add(AreaItem("",""))
-        areaAdapter.notifyItemInserted(itemList.size - 1)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            itemList.removeAt(itemList.size - 1)
-            var scrollPosition = itemList.size
-            areaAdapter.notifyItemRemoved(scrollPosition)
-            page++
-            getAreaData(BuildConfig.COVID_API_KEY)
-            areaAdapter.notifyDataSetChanged()
-        },1000)
-    }
+//    fun loadMore(){
+//        itemList.add(AreaItem("",""))
+//        areaAdapter.notifyItemInserted(itemList.size - 1)
+//
+//        Handler(Looper.getMainLooper()).postDelayed({
+//            itemList.removeAt(itemList.size - 1)
+//            var scrollPosition = itemList.size
+//            areaAdapter.notifyItemRemoved(scrollPosition)
+//            page++
+//            getAreaData(BuildConfig.COVID_API_KEY)
+//            areaAdapter.notifyDataSetChanged()
+//        },1000)
+//    }
 }

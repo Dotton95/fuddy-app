@@ -42,60 +42,60 @@ data class AreaItems(
 data class Item_Area(
     //허가구역명
     @PropertyElement(name = "prmisnZoneNm")
-    val prmisnZoneNm : String,
+    val prmisnZoneNm : String?=null,
     //시도명
     @PropertyElement(name = "ctprvnNm")
-    val ctprvnNm: String,
+    val ctprvnNm: String?=null,
     //시군구명
     @PropertyElement(name = "signguNm")
-    val signguNm: String,
+    val signguNm: String?=null,
     //소재지지번주소
     @PropertyElement(name = "lnmadr")
-    val lnmadr: String,
+    val lnmadr: String?=null,
     //위도
     @PropertyElement(name = "latitude")
-    val latitude: String,
+    val latitude: String?=null,
     //경도
     @PropertyElement(name = "longitude")
-    val longitude: String,
+    val longitude: String?=null,
     //푸드트럭운영대수
     @PropertyElement(name = "vhcleCo")
-    val vhcleCo : String,
+    val vhcleCo : String?=null,
     //허가구역 사용료
     @PropertyElement(name = "primsnZoneRntfee")
-    val prmisnZoneRntfee: String,
+    val prmisnZoneRntfee: String?=null,
     //허가구역운영시작일자
     @PropertyElement(name = "beginDate")
-    val beginDate: String,
+    val beginDate: String?=null,
     //허가구역운영종료일자
     @PropertyElement(name = "endDate")
-    val endDate: String,
+    val endDate: String?=null,
     //허가구역휴무일
     @PropertyElement(name = "rstde")
-    val rstde: String,
+    val rstde: String?=null,
     //허가구역평일운영시작시각
     @PropertyElement(name = "weekdayOperOpenHhmm")
-    val weekdayOperOpenHhmm : String,
+    val weekdayOperOpenHhmm : String?=null,
     //허가구역평일운영종료시각
     @PropertyElement(name = "weekdayOperColseHhmm")
-    val weekdayOperColseHhmm : String,
+    val weekdayOperColseHhmm : String?=null,
     //허가구역주말운영시작시각
     @PropertyElement(name = "wkendOperOpenHhmm")
-    val wkendOperOpenHhmm : String,
+    val wkendOperOpenHhmm : String?=null,
     //허가구역주말운영종료시각
     @PropertyElement(name = "wkendOperColseHhmm")
-    val wkendOperColseHhmm : String,
+    val wkendOperColseHhmm : String?=null,
     //판매제한품목
     @PropertyElement(name = "lmttPrdlst")
-    val lmttPrdlst : String,
+    val lmttPrdlst : String?=null,
     //관리기관명
     @PropertyElement(name = "institutionNm")
-    val institutionNm : String,
+    val institutionNm : String?=null,
     //관리기관 전화번호
     @PropertyElement(name = "phoneNumber")
-    val phoneNumber: String,
+    val phoneNumber: String?=null,
     //데이터 기준일자
     @PropertyElement(name = "referenceDate")
-    val referenceDate : String
+    val referenceDate : String?=null
 
 )
