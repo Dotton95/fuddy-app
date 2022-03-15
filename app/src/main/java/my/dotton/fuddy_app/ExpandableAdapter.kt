@@ -41,7 +41,6 @@ data class AreaItem(
 
 class ExpandableAdapter(private val context: Context,val itemList:ArrayList<AreaItem>) : Adapter<RecyclerView.ViewHolder>() {
 
-    //RecyclerView.Adapter<ExpandableAdapter.ExpandableViewHolder>(){
     companion object{
         private val VIEW_TYPE_ITEM = 0
         private val VIEW_TYPE_LOADING = 1
@@ -63,9 +62,6 @@ class ExpandableAdapter(private val context: Context,val itemList:ArrayList<Area
         }
     }
 
-//    override fun onBindViewHolder(holder: ExpandableViewHolder, position: Int) {
-//        holder.bind(itemList[position],position)
-//    }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(holder is ExpandableViewHolder){
             holder.bind(itemList[position],position)
@@ -87,13 +83,6 @@ class ExpandableAdapter(private val context: Context,val itemList:ArrayList<Area
             }
         }
     }
-
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ExpandableViewHolder {
-//        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-//        val binding  = AreaItemRowBinding.inflate(inflater,parent,false)
-//        return ExpandableViewHolder(binding)
-//    }
-
     override fun getItemViewType(position: Int): Int {
         //게시물과 로딩아이템의 기준 아이템 이름이 없을경우 로딩아이템
         return when(itemList[position].name){

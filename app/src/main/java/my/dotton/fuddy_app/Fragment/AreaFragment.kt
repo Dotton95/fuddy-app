@@ -37,23 +37,18 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 //    referenceDate 데이터 기준일자
 
     private lateinit var areaAdapter:ExpandableAdapter
-
-
     
     private var totalCount = 0 //전체 아이템 개수
-    private var isNext = false //다음 페이지 유무
     private var totalPage = 0//총 페이지 수
-    private var page = 0 //현재 페이지
+    private var page = 0//현재 페이지
     private var limit = 20 //한 번에 가져올 아이템 수
-
-    private var isLoading = false
 
     var itemList = ArrayList<AreaItem>()
 
     override fun initView() {
         super.initView()
         binding.apply {
-            getAreaData(BuildConfig.COVID_API_KEY,true)
+            getAreaData(BuildConfig.COVID_API_KEY,true,"경기도")
             binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -62,17 +57,18 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                         areaAdapter.deleteLoading()
                         if(page<totalPage){
                             page++
-                            getAreaData(BuildConfig.COVID_API_KEY,false)
+                            getAreaData(BuildConfig.COVID_API_KEY,false,"경기도")
+                        }else{
+                            areaAdapter.deleteLoading()
                         }
-
                     }
                 }
             })
         }
     }
-    private fun getAreaData(key:String, first:Boolean){
+    private fun getAreaData(key:String, first:Boolean,ctprvnNm:String){
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
-        areaInterface.getAreaData(page,limit,"xml",key,"경기도").enqueue(object : Callback<AreaResponse> {
+        areaInterface.getAreaData(page,limit,"xml",key,ctprvnNm).enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if(response.isSuccessful){
                     val result = response.body() as AreaResponse
@@ -104,20 +100,4 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                 Log.d("AreaFragment",t.message?:"통신오류")}
         })
     }
-//    fun loadMore(){
-//        itemList.add(AreaItem("",""))
-//        areaAdapter.notifyItemInserted(itemList.lastIndex)
-//
-//        Handler(Looper.getMainLooper()).postDelayed({
-//            itemList.removeAt(itemList.lastIndex)
-//            var scrollPosition = itemList.size
-//            areaAdapter.notifyItemRemoved(scrollPosition)
-//            if(page<totalPage){
-//                page++
-//                getAreaData(BuildConfig.COVID_API_KEY)
-//            }
-//            areaAdapter.notifyDataSetChanged()
-//            isLoading = false
-//        },2000)
-//    }
 }

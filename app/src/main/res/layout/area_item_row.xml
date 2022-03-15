@@ -21,10 +21,10 @@
             android:layout_height="wrap_content"/>
         <TextView
             tools:text="2021-12-31 ~ 2022-12-31"
-            app:layout_constraintLeft_toRightOf="@id/areaItem_tv_name"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="@+id/areaItem_btn_arrow"
+            app:layout_constraintRight_toLeftOf="@+id/areaItem_btn_arrow"
+            android:layout_marginRight="10dp"
             android:id="@+id/areaItem_tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
