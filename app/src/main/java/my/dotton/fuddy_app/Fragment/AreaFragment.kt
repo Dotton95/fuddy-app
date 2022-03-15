@@ -44,48 +44,58 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     private var isNext = false //다음 페이지 유무
     private var totalPage = 0//총 페이지 수
     private var page = 0 //현재 페이지
-    private var limit = 10 //한 번에 가져올 아이템 수
+    private var limit = 20 //한 번에 가져올 아이템 수
+
+    private var isLoading = false
+
+    var itemList = ArrayList<AreaItem>()
 
     override fun initView() {
         super.initView()
         binding.apply {
-            getAreaData(BuildConfig.COVID_API_KEY)
-            /*binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
+            getAreaData(BuildConfig.COVID_API_KEY,true)
+            binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     //화면에 보이는 마지막 아이템의 포지션
-                    val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
-                    val itemTotalCount = recyclerView.adapter!!.itemCount - 1
-                    //스크롤이 끝에 도달했다면
-                    if(lastVisibleItemPosition == itemTotalCount){
-                        loadMore()
+                    if(!binding.areaRv.canScrollVertically(1)){
+                        areaAdapter.deleteLoading()
+                        if(page<totalPage){
+                            page++
+                            getAreaData(BuildConfig.COVID_API_KEY,false)
+                        }
+
                     }
                 }
-            })*/
+            })
         }
     }
-    private fun getAreaData(key:String){
+    private fun getAreaData(key:String, first:Boolean){
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
-        areaInterface.getAreaData(page,limit,"xml",key,"서울특별시").enqueue(object : Callback<AreaResponse> {
+        areaInterface.getAreaData(page,limit,"xml",key,"경기도").enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if(response.isSuccessful){
                     val result = response.body() as AreaResponse
-                    var itemList = ArrayList<AreaItem>()
                     totalCount = result.body.totalCount
                     page = result.body.pageNo
                     totalPage = totalCount/limit + 1
 
-                    for(i in 0 until 10){
+                    for(i in result.body.items.item.indices){
                         var item = AreaItem()
                         item.name = result.body.items.item[i].prmisnZoneNm+""
                         item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
                         itemList.add(item)
                     }
-                    Log.d("dotton",itemList[0].name)
-                    binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
-                    areaAdapter = ExpandableAdapter(requireContext(),itemList)
-                    binding.areaRv.adapter = areaAdapter
-
+                    if(first){
+                        binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
+                        areaAdapter = ExpandableAdapter(requireContext(),itemList)
+                        areaAdapter.setList(itemList)
+                        areaAdapter.notifyItemRangeInserted((page-1)*10,10)
+                        binding.areaRv.adapter = areaAdapter
+                    }else{
+                        areaAdapter.setList(itemList)
+                        areaAdapter.notifyItemRangeInserted((page-1)*10,10)
+                    }
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")
                 }
@@ -96,15 +106,18 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     }
 //    fun loadMore(){
 //        itemList.add(AreaItem("",""))
-//        areaAdapter.notifyItemInserted(itemList.size - 1)
+//        areaAdapter.notifyItemInserted(itemList.lastIndex)
 //
 //        Handler(Looper.getMainLooper()).postDelayed({
-//            itemList.removeAt(itemList.size - 1)
+//            itemList.removeAt(itemList.lastIndex)
 //            var scrollPosition = itemList.size
 //            areaAdapter.notifyItemRemoved(scrollPosition)
-//            page++
-//            getAreaData(BuildConfig.COVID_API_KEY)
+//            if(page<totalPage){
+//                page++
+//                getAreaData(BuildConfig.COVID_API_KEY)
+//            }
 //            areaAdapter.notifyDataSetChanged()
-//        },1000)
+//            isLoading = false
+//        },2000)
 //    }
 }

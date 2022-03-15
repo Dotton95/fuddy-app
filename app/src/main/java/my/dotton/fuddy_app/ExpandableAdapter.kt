@@ -39,71 +39,75 @@ data class AreaItem(
     var isExpanded:Boolean = false
 )
 
-class ExpandableAdapter(private val context: Context,val itemList:ArrayList<AreaItem>) : RecyclerView.Adapter<ExpandableAdapter.ExpandableViewHolder>(){
-    /*: Adapter<RecyclerView.ViewHolder>() {
+class ExpandableAdapter(private val context: Context,val itemList:ArrayList<AreaItem>) : Adapter<RecyclerView.ViewHolder>() {
 
+    //RecyclerView.Adapter<ExpandableAdapter.ExpandableViewHolder>(){
     companion object{
         private val VIEW_TYPE_ITEM = 0
         private val VIEW_TYPE_LOADING = 1
-    }*/
-
+    }
+    class LoadingViewHolder(private  val binding:LoadingItemBinding) : ViewHolder(binding.root){}
     class ExpandableViewHolder(private val binding: AreaItemRowBinding): ViewHolder(binding.root) {
         fun bind(areaItem: AreaItem, position: Int) {
             binding.areaItemTvName.text = areaItem.name
             binding.areaItemTvDate.text = areaItem.date
-            /*
-                binding.areaItemBtnArrow.setOnClickListener {
-                    areaItem.isExpanded = toggleLayout(!areaItem.isExpanded,it,binding.areaItemExpandedLayout)
-                }*/
+            binding.areaItemBtnArrow.setOnClickListener {
+                areaItem.isExpanded = toggleLayout(!areaItem.isExpanded,it,binding.areaItemExpandedLayout)
+            }
         }
-    }
-    override fun onBindViewHolder(holder: ExpandableViewHolder, position: Int) {
-        holder.bind(itemList[position],position)
-        /*        ViewHolder
-        if(holder is ExpandableViewHolder){
-            holder.bind(itemList[position],position)
-        }else {
-
-        }*/
-    }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ExpandableViewHolder {
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val binding  = AreaItemRowBinding.inflate(inflater,parent,false)
-        return ExpandableViewHolder(binding)
-        /*    : ViewHolder {
-        return when(viewType){
-            VIEW_TYPE_ITEM ->{
-                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val binding  = AreaItemRowBinding.inflate(inflater,parent,false)
-                ExpandableViewHolder(binding)
-            }
-            else ->{
-                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val binding  = LoadingItemBinding.inflate(inflater,parent,false)
-                LoadingViewHolder(binding)
-            }
-        }*/
-    }
-
         private fun toggleLayout(isExpanded: Boolean,view:View,layoutExpand: LinearLayout):Boolean{
             ToggleAnimation.toggleArrow(view,isExpanded)
             if(isExpanded) ToggleAnimation.expand(layoutExpand)
             else ToggleAnimation.collapse(layoutExpand)
             return isExpanded
         }
+    }
 
+//    override fun onBindViewHolder(holder: ExpandableViewHolder, position: Int) {
+//        holder.bind(itemList[position],position)
+//    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if(holder is ExpandableViewHolder){
+            holder.bind(itemList[position],position)
+        }else { }
+    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ViewHolder {
+        return when(viewType) {
+            VIEW_TYPE_ITEM -> {
+                val inflater =
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val binding = AreaItemRowBinding.inflate(inflater, parent, false)
+                ExpandableViewHolder(binding)
+            }
+            else -> {
+                val inflater =
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val binding = LoadingItemBinding.inflate(inflater, parent, false)
+                LoadingViewHolder(binding)
+            }
+        }
+    }
+
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ExpandableViewHolder {
+//        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//        val binding  = AreaItemRowBinding.inflate(inflater,parent,false)
+//        return ExpandableViewHolder(binding)
+//    }
+
+    override fun getItemViewType(position: Int): Int {
+        //게시물과 로딩아이템의 기준 아이템 이름이 없을경우 로딩아이템
+        return when(itemList[position].name){
+            "" -> VIEW_TYPE_LOADING
+            else -> VIEW_TYPE_ITEM
+        }
+    }
     override fun getItemCount(): Int {return itemList.size }
 
-
+    fun setList(areaItems : MutableList<AreaItem>){
+        itemList.addAll(areaItems)
+        itemList.add(AreaItem("",""))
+    }
+    fun deleteLoading(){
+        itemList.removeAt(itemList.lastIndex)
+    }
 }
-//    class LoadingViewHolder(private  val binding:LoadingItemBinding) : ViewHolder(binding.root){}
-
-//    override fun getItemViewType(position: Int): Int {
-//        //게시물과 로딩아이템의 기준 아이템 이름이 없을경우 로딩아이템
-////        return when(itemList[position].name){
-////            "" -> VIEW_TYPE_LOADING
-////            else -> VIEW_TYPE_ITEM
-////        }
-//    }
-//
-//}
