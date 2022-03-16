@@ -1,8 +1,13 @@
 package my.dotton.fuddy_app.Fragment
 
+import android.content.Context
+import android.location.Geocoder
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import my.dotton.fuddy_app.*
@@ -11,6 +16,8 @@ import my.dotton.fuddy_app.databinding.FragmentAreaBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
+import kotlin.math.round
 
 class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
@@ -45,30 +52,62 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
     var itemList = ArrayList<AreaItem>()
 
+    var ctprvnNm = ""
+    var signguNm = ""
+
     override fun initView() {
         super.initView()
         binding.apply {
-            getAreaData(BuildConfig.COVID_API_KEY,true,"경기도")
-            binding.areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
+            //getAreaData(BuildConfig.COVID_API_KEY,true,"경기도")
+            areaTvNodata.visibility = View.GONE
+            areaRv.visibility = View.GONE
+            areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     //화면에 보이는 마지막 아이템의 포지션
-                    if(!binding.areaRv.canScrollVertically(1)){
+                    if(!areaRv.canScrollVertically(1)){
                         areaAdapter.deleteLoading()
                         if(page<totalPage){
                             page++
-                            getAreaData(BuildConfig.COVID_API_KEY,false,"경기도")
+                            getAreaData(BuildConfig.COVID_API_KEY,false,ctprvnNm,signguNm)
                         }else{
                             areaAdapter.deleteLoading()
                         }
                     }
                 }
             })
+
+            areaSearchview.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
+
+                    try {
+                        var address = Geocoder(requireContext()).getFromLocationName(query,2)
+                        ctprvnNm = if(address[0].adminArea!=null) address[0].adminArea else address[0].subAdminArea
+                        signguNm = if(address[0].locality!=null) address[0].locality else address[0].subLocality
+                        areaRv.visibility = View.VISIBLE
+                        areaTvNodata.visibility = View.GONE
+                        getAreaData(BuildConfig.COVID_API_KEY,true,ctprvnNm,signguNm)
+
+                    }catch (e: Exception) {
+                        areaRv.visibility = View.GONE
+                        areaTvNodata.visibility = View.VISIBLE
+                        areaTvNodata.text = "주소가 잘못되었습니다"
+                    }
+                    return true
+                }
+                override fun onQueryTextChange(newText: String?): Boolean { return true }
+            })
         }
     }
-    private fun getAreaData(key:String, first:Boolean,ctprvnNm:String){
+    private fun getAreaData(key:String, first:Boolean,ctprvnNm:String, signguNm:String){
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
-        areaInterface.getAreaData(page,limit,"xml",key,ctprvnNm).enqueue(object : Callback<AreaResponse> {
+
+        var myRetrofit = if(signguNm!=null) areaInterface.getAreaDataSigngu(page,limit,"xml",key,ctprvnNm,signguNm)
+                         else areaInterface.getAreaData(page,limit,"xml",key,ctprvnNm)
+
+        myRetrofit.enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if(response.isSuccessful){
                     val result = response.body() as AreaResponse

@@ -29,6 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <ImageButton
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/baseline_expand_more_24"
             android:id="@+id/areaItem_btn_arrow"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
