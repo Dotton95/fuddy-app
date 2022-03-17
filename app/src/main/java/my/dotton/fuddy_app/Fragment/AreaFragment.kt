@@ -58,7 +58,6 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     override fun initView() {
         super.initView()
         binding.apply {
-            //getAreaData(BuildConfig.COVID_API_KEY,true,"경기도")
             areaTvNodata.visibility = View.GONE
             areaRv.visibility = View.GONE
             areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
@@ -67,12 +66,12 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     //화면에 보이는 마지막 아이템의 포지션
                     if(!areaRv.canScrollVertically(1)){
                         areaAdapter.deleteLoading()
+
                         if(page<totalPage){
                             page++
                             getAreaData(BuildConfig.COVID_API_KEY,false,ctprvnNm,signguNm)
-                        }else{
-                            areaAdapter.deleteLoading()
                         }
+
                     }
                 }
             })
@@ -84,13 +83,15 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
                     try {
                         var address = Geocoder(requireContext()).getFromLocationName(query,2)
-                        ctprvnNm = if(address[0].adminArea!=null) address[0].adminArea else address[0].subAdminArea
-                        signguNm = if(address[0].locality!=null) address[0].locality else address[0].subLocality
+                        ctprvnNm = address[0].adminArea
+                        signguNm = if(address[0].locality!=null) address[0].locality else ""
+
                         areaRv.visibility = View.VISIBLE
                         areaTvNodata.visibility = View.GONE
                         getAreaData(BuildConfig.COVID_API_KEY,true,ctprvnNm,signguNm)
 
                     }catch (e: Exception) {
+
                         areaRv.visibility = View.GONE
                         areaTvNodata.visibility = View.VISIBLE
                         areaTvNodata.text = "주소가 잘못되었습니다"
@@ -104,7 +105,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     private fun getAreaData(key:String, first:Boolean,ctprvnNm:String, signguNm:String){
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
 
-        var myRetrofit = if(signguNm!=null) areaInterface.getAreaDataSigngu(page,limit,"xml",key,ctprvnNm,signguNm)
+        var myRetrofit = if(signguNm != "") areaInterface.getAreaDataSigngu(page,limit,"xml",key,ctprvnNm,signguNm)
                          else areaInterface.getAreaData(page,limit,"xml",key,ctprvnNm)
 
         myRetrofit.enqueue(object : Callback<AreaResponse> {
@@ -113,6 +114,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     val result = response.body() as AreaResponse
                     totalCount = result.body.totalCount
                     page = result.body.pageNo
+
                     totalPage = totalCount/limit + 1
 
                     for(i in result.body.items.item.indices){
@@ -124,12 +126,12 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     if(first){
                         binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
                         areaAdapter = ExpandableAdapter(requireContext(),itemList)
-                        areaAdapter.setList(itemList)
-                        areaAdapter.notifyItemRangeInserted((page-1)*10,10)
+                        //areaAdapter.setList(itemList)
+                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
                         binding.areaRv.adapter = areaAdapter
                     }else{
                         areaAdapter.setList(itemList)
-                        areaAdapter.notifyItemRangeInserted((page-1)*10,10)
+                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
                     }
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")

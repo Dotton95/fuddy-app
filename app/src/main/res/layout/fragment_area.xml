@@ -43,7 +43,7 @@
         <TextView
             android:visibility="gone"
             android:id="@+id/area_tv_nodata"
-            tools:text="검색 결과가 없습니다"
+            android:text="검색 결과가 없습니다"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/area_searchview"
             app:layout_constraintBottom_toBottomOf="parent"
