@@ -58,103 +58,96 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     override fun initView() {
         super.initView()
         binding.apply {
-            areaTvNodata.visibility = View.GONE
+
             areaRv.visibility = View.GONE
+            areaTvNodata.visibility = View.GONE
+
             areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     //화면에 보이는 마지막 아이템의 포지션
                     if(!areaRv.canScrollVertically(1)){
                         areaAdapter.deleteLoading()
-
-                        if(page<totalPage){
-                            page++
-                            getAreaData(BuildConfig.COVID_API_KEY,false,ctprvnNm,signguNm)
-                        }
-
+                        getAreaData(false,ctprvnNm,signguNm)
+//                        if(page<totalPage){
+//                            page++
+//
+//                        }
                     }
                 }
             })
 
             areaSearchview.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
-                override fun onQueryTextSubmit(query: String?): Boolean {
+                override fun onQueryTextSubmit(query: String): Boolean {
                     val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
 
-                    val spaceCheck = query?.split(" ")?.size
+                    areaRv.visibility = View.VISIBLE
+                    areaTvNodata.visibility = View.GONE
+
+                    val spaceCheck = query.contains(" ")
 
                     try {
-                        var address = Geocoder(requireContext()).getFromLocationName(query,2)
+                        var address = Geocoder(requireContext()).getFromLocationName(query,0)
 
                         ctprvnNm = address[0].adminArea
                         signguNm = if(address[0].locality!=null) address[0].locality else ""
 
-                        if(spaceCheck != null && spaceCheck > 1 && signguNm.equals("")){
-                            itemList = ArrayList<AreaItem>()
-                            areaRv.visibility = View.GONE
-                            areaTvNodata.visibility = View.VISIBLE
-                            areaTvNodata.text = "주소가 잘못되었습니다"
+                        Log.d("dotton",ctprvnNm)
+                        Log.d("dotton",signguNm)
+
+                        if(spaceCheck && signguNm == ""){
+                            throw Exception()
                         }else{
-                            areaRv.visibility = View.VISIBLE
-                            areaTvNodata.visibility = View.GONE
-                            getAreaData(BuildConfig.COVID_API_KEY,true,ctprvnNm,signguNm)
+                            getAreaData(true,ctprvnNm,signguNm)
                         }
+
                     }catch (e: Exception) {
+                        itemList = ArrayList<AreaItem>()
                         areaRv.visibility = View.GONE
                         areaTvNodata.visibility = View.VISIBLE
                         areaTvNodata.text = "주소가 잘못되었습니다"
                     }
-
                     return true
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
                     itemList = ArrayList<AreaItem>()
                     areaRv.visibility = View.GONE
-                    areaTvNodata.visibility = View.VISIBLE
-                    areaTvNodata.text = ""
+                    areaTvNodata.visibility = View.GONE
                     return true
                 }
             })
         }
     }
-    private fun getAreaData(key:String, first:Boolean,ctprvnNm:String, signguNm:String){
+    private fun getAreaData(first:Boolean,ctprvnNm:String, signguNm:String){
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
 
-        var myRetrofit = if(signguNm != "") areaInterface.getAreaDataSigngu(page,limit,"xml",key,ctprvnNm,signguNm)
-                         else areaInterface.getAreaData(page,limit,"xml",key,ctprvnNm)
+        val myRetrofit = if(signguNm != "") areaInterface.getAreaDataSigngu(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm,signguNm)
+                         else areaInterface.getAreaData(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm)
 
         myRetrofit.enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
-                Log.d("dotton123",response.toString())
                 if(response.isSuccessful){
-
-                    if(response.body()!!.header.code.equals("03")){
-                        itemList = ArrayList<AreaItem>()
-                        binding.areaRv.visibility = View.GONE
-                        binding.areaTvNodata.visibility = View.VISIBLE
-                        binding.areaTvNodata.text = "해당 주소에 지역이 없습니다."
+                    val result = response.body() as AreaResponse
+                    totalCount = result.body.totalCount
+                    page = result.body.pageNo
+                    totalPage = totalCount/limit + 1
+                    for(i in result.body.items.item.indices){
+                        var item = AreaItem()
+                        item.name = result.body.items.item[i].prmisnZoneNm+""
+                        item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
+                        itemList.add(item)
+                    }
+                    if(first){
+                        var item = AreaItem()
+                        binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
+                        areaAdapter = ExpandableAdapter(requireContext(),itemList)
+                        //areaAdapter.setList(itemList)
+                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
+                        binding.areaRv.adapter = areaAdapter
                     }else{
-                        val result = response.body() as AreaResponse
-                        totalCount = result.body.totalCount
-                        page = result.body.pageNo
-                        totalPage = totalCount/limit + 1
-                        for(i in result.body.items.item.indices){
-                            var item = AreaItem()
-                            item.name = result.body.items.item[i].prmisnZoneNm+""
-                            item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
-                            itemList.add(item)
-                        }
-                        if(first){
-                            var item = AreaItem()
-                            binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
-                            areaAdapter = ExpandableAdapter(requireContext(),itemList)
-                            //areaAdapter.setList(itemList)
-                            areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
-                            binding.areaRv.adapter = areaAdapter
-                        }else{
-                            areaAdapter.setList(itemList)
-                            areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
-                        }
+                        areaAdapter.setList(itemList)
+                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
                     }
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")
