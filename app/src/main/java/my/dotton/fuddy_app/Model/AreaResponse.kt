@@ -16,9 +16,9 @@ data class AreaResponse(
 @Xml(name="header")
 data class AreaHeader(
     @PropertyElement
-    val resultCode:String,
+    val code:String,
     @PropertyElement
-    val resultMsg:String
+    val codeNm:String
 )
 @Xml(name="body")
 data class AreaBody(

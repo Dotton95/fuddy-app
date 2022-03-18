@@ -81,24 +81,39 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
 
+                    val spaceCheck = query?.split(" ")?.size
+
                     try {
                         var address = Geocoder(requireContext()).getFromLocationName(query,2)
+
                         ctprvnNm = address[0].adminArea
                         signguNm = if(address[0].locality!=null) address[0].locality else ""
 
-                        areaRv.visibility = View.VISIBLE
-                        areaTvNodata.visibility = View.GONE
-                        getAreaData(BuildConfig.COVID_API_KEY,true,ctprvnNm,signguNm)
-
+                        if(spaceCheck != null && spaceCheck > 1 && signguNm.equals("")){
+                            itemList = ArrayList<AreaItem>()
+                            areaRv.visibility = View.GONE
+                            areaTvNodata.visibility = View.VISIBLE
+                            areaTvNodata.text = "주소가 잘못되었습니다"
+                        }else{
+                            areaRv.visibility = View.VISIBLE
+                            areaTvNodata.visibility = View.GONE
+                            getAreaData(BuildConfig.COVID_API_KEY,true,ctprvnNm,signguNm)
+                        }
                     }catch (e: Exception) {
-
                         areaRv.visibility = View.GONE
                         areaTvNodata.visibility = View.VISIBLE
                         areaTvNodata.text = "주소가 잘못되었습니다"
                     }
+
                     return true
                 }
-                override fun onQueryTextChange(newText: String?): Boolean { return true }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    itemList = ArrayList<AreaItem>()
+                    areaRv.visibility = View.GONE
+                    areaTvNodata.visibility = View.VISIBLE
+                    areaTvNodata.text = ""
+                    return true
+                }
             })
         }
     }
@@ -110,28 +125,36 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
         myRetrofit.enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
+                Log.d("dotton123",response.toString())
                 if(response.isSuccessful){
-                    val result = response.body() as AreaResponse
-                    totalCount = result.body.totalCount
-                    page = result.body.pageNo
 
-                    totalPage = totalCount/limit + 1
-
-                    for(i in result.body.items.item.indices){
-                        var item = AreaItem()
-                        item.name = result.body.items.item[i].prmisnZoneNm+""
-                        item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
-                        itemList.add(item)
-                    }
-                    if(first){
-                        binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
-                        areaAdapter = ExpandableAdapter(requireContext(),itemList)
-                        //areaAdapter.setList(itemList)
-                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
-                        binding.areaRv.adapter = areaAdapter
+                    if(response.body()!!.header.code.equals("03")){
+                        itemList = ArrayList<AreaItem>()
+                        binding.areaRv.visibility = View.GONE
+                        binding.areaTvNodata.visibility = View.VISIBLE
+                        binding.areaTvNodata.text = "해당 주소에 지역이 없습니다."
                     }else{
-                        areaAdapter.setList(itemList)
-                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
+                        val result = response.body() as AreaResponse
+                        totalCount = result.body.totalCount
+                        page = result.body.pageNo
+                        totalPage = totalCount/limit + 1
+                        for(i in result.body.items.item.indices){
+                            var item = AreaItem()
+                            item.name = result.body.items.item[i].prmisnZoneNm+""
+                            item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
+                            itemList.add(item)
+                        }
+                        if(first){
+                            var item = AreaItem()
+                            binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
+                            areaAdapter = ExpandableAdapter(requireContext(),itemList)
+                            //areaAdapter.setList(itemList)
+                            areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
+                            binding.areaRv.adapter = areaAdapter
+                        }else{
+                            areaAdapter.setList(itemList)
+                            areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
+                        }
                     }
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")
