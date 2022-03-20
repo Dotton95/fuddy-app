@@ -61,7 +61,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
         binding.apply {
 
             var spinnerList = arrayListOf<String>(
-                "서울특별시","경기도","인천","강원","경남","경북","전남","전북","충남","충북","세종","대전","울산","광주","대구","부산","제주"
+                "서울특별시","경기도","인천광역시","강원도","경상남도","경상북도","전라남도","전라북도","충청남도","충청북도","대전광역시","광주광역시","대구광역시","부산광역시","제주특별자치도"
             )
 
             areaRv.visibility = View.GONE
