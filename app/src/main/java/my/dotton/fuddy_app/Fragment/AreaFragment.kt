@@ -7,6 +7,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -59,6 +60,10 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
         super.initView()
         binding.apply {
 
+            var spinnerList = arrayListOf<String>(
+                "서울특별시","경기도","인천","강원","경남","경북","전남","전북","충남","충북","세종","대전","울산","광주","대구","부산","제주"
+            )
+
             areaRv.visibility = View.GONE
             areaTvNodata.visibility = View.GONE
 
@@ -68,7 +73,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     //화면에 보이는 마지막 아이템의 포지션
                     if(!areaRv.canScrollVertically(1)){
                         areaAdapter.deleteLoading()
-                        getAreaData(false,ctprvnNm,signguNm)
+                        getAreaData(false,ctprvnNm)
 //                        if(page<totalPage){
 //                            page++
 //
@@ -76,54 +81,64 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     }
                 }
             })
-
-            areaSearchview.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
-
-                    areaRv.visibility = View.VISIBLE
-                    areaTvNodata.visibility = View.GONE
-
-                    val spaceCheck = query.contains(" ")
-
-                    try {
-                        var address = Geocoder(requireContext()).getFromLocationName(query,0)
-
-                        ctprvnNm = address[0].adminArea
-                        signguNm = if(address[0].locality!=null) address[0].locality else ""
-
-                        Log.d("dotton",ctprvnNm)
-                        Log.d("dotton",signguNm)
-
-                        if(spaceCheck && signguNm == ""){
-                            throw Exception()
-                        }else{
-                            getAreaData(true,ctprvnNm,signguNm)
-                        }
-
-                    }catch (e: Exception) {
-                        itemList = ArrayList<AreaItem>()
-                        areaRv.visibility = View.GONE
-                        areaTvNodata.visibility = View.VISIBLE
-                        areaTvNodata.text = "주소가 잘못되었습니다"
-                    }
-                    return true
+            areaSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    getAreaData(true,spinnerList[position])
                 }
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    itemList = ArrayList<AreaItem>()
+                override fun onNothingSelected(parent: AdapterView<*>?) {
                     areaRv.visibility = View.GONE
-                    areaTvNodata.visibility = View.GONE
-                    return true
+                    areaTvNodata.visibility = View.VISIBLE
+                    areaTvNodata.text = "시도를 선택해주세요"
                 }
+            }
+            
+//            areaSpinner.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+//                override fun onQueryTextSubmit(query: String): Boolean {
+//                    val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//                    inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
+//
+//                    areaRv.visibility = View.VISIBLE
+//                    areaTvNodata.visibility = View.GONE
+//
+//                    val spaceCheck = query.contains(" ")
+//
+//                    try {
+//                        var address = Geocoder(requireContext()).getFromLocationName(query,0)
+//
+//                        ctprvnNm = address[0].adminArea
+//                        signguNm = if(address[0].locality!=null) address[0].locality else ""
+//
+//                        Log.d("dotton",ctprvnNm)
+//                        Log.d("dotton",signguNm)
+//
+//                        if(spaceCheck && signguNm == ""){
+//                            throw Exception()
+//                        }else{
+//                            getAreaData(true,ctprvnNm,signguNm)
+//                        }
+//
+//                    }catch (e: Exception) {
+//                        itemList = ArrayList<AreaItem>()
+//                        areaRv.visibility = View.GONE
+//                        areaTvNodata.visibility = View.VISIBLE
+//                        areaTvNodata.text = "주소가 잘못되었습니다"
+//                    }
+//                    return true
+//                }
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    itemList = ArrayList<AreaItem>()
+//                    areaRv.visibility = View.GONE
+//                    areaTvNodata.visibility = View.GONE
+//                    return true
+//                }
             })
         }
     }
-    private fun getAreaData(first:Boolean,ctprvnNm:String, signguNm:String){
+    private fun getAreaData(first:Boolean,ctprvnNm:String){
+
         val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
 
-        val myRetrofit = if(signguNm != "") areaInterface.getAreaDataSigngu(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm,signguNm)
-                         else areaInterface.getAreaData(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm)
+        val myRetrofit = areaInterface.getAreaData(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm)
 
         myRetrofit.enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {

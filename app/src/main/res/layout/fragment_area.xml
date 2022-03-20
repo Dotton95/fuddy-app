@@ -22,20 +22,22 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/area_searchview"
+        <Spinner
+            android:id="@+id/area_spinner"
             android:layout_marginTop="10dp"
-            app:queryHint="장소,주소 검색"
-            app:iconifiedByDefault="false"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:spinnerMode="dialog"
+            android:gravity="center"
+            android:textAlignment="center"
             app:layout_constraintTop_toBottomOf="@id/area_tv_banner"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            style="@style/mSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <androidx.recyclerview.widget.RecyclerView
             android:visibility="gone"
             android:id="@+id/area_rv"
-            app:layout_constraintTop_toBottomOf="@id/area_searchview"
+            app:layout_constraintTop_toBottomOf="@id/area_spinner"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
@@ -45,7 +47,7 @@
             android:id="@+id/area_tv_nodata"
             android:text="검색 결과가 없습니다"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/area_searchview"
+            app:layout_constraintTop_toBottomOf="@id/area_spinner"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             android:layout_height="0dp"/>

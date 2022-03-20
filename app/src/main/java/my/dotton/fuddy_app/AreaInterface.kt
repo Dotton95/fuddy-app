@@ -16,14 +16,4 @@ interface AreaInterface {
         @Query("serviceKey") serviceKey:String,
         @Query("ctprvnNm") ctprvnNm:String
     ): Call<AreaResponse>
-
-    @GET("tn_pubr_public_food_truck_permit_area_api")
-    fun getAreaDataSigngu(
-        @Query("pageNo") pageNo:Int,
-        @Query("numOfRows") numOfRows:Int,
-        @Query("type") type:String,
-        @Query("serviceKey") serviceKey:String,
-        @Query("ctprvnNm") ctprvnNm:String,
-        @Query("signguNm") signguNm:String
-    ): Call<AreaResponse>
 }
