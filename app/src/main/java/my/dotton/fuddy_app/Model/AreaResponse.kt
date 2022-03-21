@@ -16,9 +16,9 @@ data class AreaResponse(
 @Xml(name="header")
 data class AreaHeader(
     @PropertyElement
-    val code:String,
+    val resultCode:String,
     @PropertyElement
-    val codeNm:String
+    val resultMsg:String
 )
 @Xml(name="body")
 data class AreaBody(
@@ -42,60 +42,59 @@ data class AreaItems(
 data class Item_Area(
     //허가구역명
     @PropertyElement(name = "prmisnZoneNm")
-    val prmisnZoneNm : String?=null,
+    val prmisnZoneNm : String,
     //시도명
     @PropertyElement(name = "ctprvnNm")
-    val ctprvnNm: String?=null,
+    val ctprvnNm: String,
     //시군구명
     @PropertyElement(name = "signguNm")
-    val signguNm: String?=null,
+    val signguNm: String,
     //소재지지번주소
     @PropertyElement(name = "lnmadr")
-    val lnmadr: String?=null,
+    val lnmadr: String,
     //위도
     @PropertyElement(name = "latitude")
-    val latitude: String?=null,
+    val latitude: String,
     //경도
     @PropertyElement(name = "longitude")
-    val longitude: String?=null,
+    val longitude: String,
     //푸드트럭운영대수
     @PropertyElement(name = "vhcleCo")
-    val vhcleCo : String?=null,
+    val vhcleCo : String,
     //허가구역 사용료
-    @PropertyElement(name = "primsnZoneRntfee")
-    val prmisnZoneRntfee: String?=null,
+    @PropertyElement(name = "prmisnZoneRntfee")
+    val prmisnZoneRntfee: String,
     //허가구역운영시작일자
     @PropertyElement(name = "beginDate")
-    val beginDate: String?=null,
+    val beginDate: String,
     //허가구역운영종료일자
     @PropertyElement(name = "endDate")
-    val endDate: String?=null,
+    val endDate: String,
     //허가구역휴무일
     @PropertyElement(name = "rstde")
-    val rstde: String?=null,
+    val rstde: String,
     //허가구역평일운영시작시각
     @PropertyElement(name = "weekdayOperOpenHhmm")
-    val weekdayOperOpenHhmm : String?=null,
+    val weekdayOperOpenHhmm : String,
     //허가구역평일운영종료시각
     @PropertyElement(name = "weekdayOperColseHhmm")
-    val weekdayOperColseHhmm : String?=null,
+    val weekdayOperColseHhmm : String,
     //허가구역주말운영시작시각
     @PropertyElement(name = "wkendOperOpenHhmm")
-    val wkendOperOpenHhmm : String?=null,
+    val wkendOperOpenHhmm : String,
     //허가구역주말운영종료시각
-    @PropertyElement(name = "wkendOperColseHhmm")
-    val wkendOperColseHhmm : String?=null,
+    @PropertyElement(name = "wkendOperCloseHhmm")
+    val wkendOperCloseHhmm : String,
     //판매제한품목
     @PropertyElement(name = "lmttPrdlst")
-    val lmttPrdlst : String?=null,
+    val lmttPrdlst : String,
     //관리기관명
     @PropertyElement(name = "institutionNm")
-    val institutionNm : String?=null,
+    val institutionNm : String,
     //관리기관 전화번호
     @PropertyElement(name = "phoneNumber")
-    val phoneNumber: String?=null,
+    val phoneNumber: String,
     //데이터 기준일자
     @PropertyElement(name = "referenceDate")
-    val referenceDate : String?=null
-
+    val referenceDate : String
 )

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,18 +52,21 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
     private var page = 0//현재 페이지
     private var limit = 20 //한 번에 가져올 아이템 수
 
-    var itemList = ArrayList<AreaItem>()
-
+    companion object{
+        var itemList = ArrayList<AreaItem>()
+    }
     var ctprvnNm = ""
     var signguNm = ""
+
+    var spinnerList = arrayListOf<String>(
+        "시도를 선택해주세요","서울특별시","경기도","인천광역시","강원도","경상남도","경상북도","전라남도","전라북도","충청남도","충청북도","대전광역시","광주광역시","대구광역시","부산광역시","제주특별자치도"
+    )
 
     override fun initView() {
         super.initView()
         binding.apply {
 
-            var spinnerList = arrayListOf<String>(
-                "서울특별시","경기도","인천광역시","강원도","경상남도","경상북도","전라남도","전라북도","충청남도","충청북도","대전광역시","광주광역시","대구광역시","부산광역시","제주특별자치도"
-            )
+            areaSpinner.adapter = ArrayAdapter(requireContext(),R.layout.spinner_custom,spinnerList)
 
             areaRv.visibility = View.GONE
             areaTvNodata.visibility = View.GONE
@@ -83,7 +87,16 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
             })
             areaSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    getAreaData(true,spinnerList[position])
+                    if(position > 0){
+                        itemList.clear()
+                        areaRv.visibility = View.VISIBLE
+                        areaTvNodata.visibility = View.GONE
+                        getAreaData(true,spinnerList[position])
+                    }else{
+                        areaRv.visibility = View.GONE
+                        areaTvNodata.visibility = View.VISIBLE
+                        areaTvNodata.text = "시도를 선택해주세요"
+                    }
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                     areaRv.visibility = View.GONE
@@ -91,54 +104,53 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     areaTvNodata.text = "시도를 선택해주세요"
                 }
             }
-            
-//            areaSpinner.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
-//                override fun onQueryTextSubmit(query: String): Boolean {
-//                    val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//                    inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
-//
-//                    areaRv.visibility = View.VISIBLE
-//                    areaTvNodata.visibility = View.GONE
-//
-//                    val spaceCheck = query.contains(" ")
-//
-//                    try {
-//                        var address = Geocoder(requireContext()).getFromLocationName(query,0)
-//
-//                        ctprvnNm = address[0].adminArea
-//                        signguNm = if(address[0].locality!=null) address[0].locality else ""
-//
-//                        Log.d("dotton",ctprvnNm)
-//                        Log.d("dotton",signguNm)
-//
-//                        if(spaceCheck && signguNm == ""){
-//                            throw Exception()
-//                        }else{
-//                            getAreaData(true,ctprvnNm,signguNm)
-//                        }
-//
-//                    }catch (e: Exception) {
-//                        itemList = ArrayList<AreaItem>()
-//                        areaRv.visibility = View.GONE
-//                        areaTvNodata.visibility = View.VISIBLE
-//                        areaTvNodata.text = "주소가 잘못되었습니다"
-//                    }
-//                    return true
-//                }
-//                override fun onQueryTextChange(newText: String?): Boolean {
-//                    itemList = ArrayList<AreaItem>()
-//                    areaRv.visibility = View.GONE
-//                    areaTvNodata.visibility = View.GONE
-//                    return true
-//                }
+      /*
+            areaSpinner.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
+
+                    areaRv.visibility = View.VISIBLE
+                    areaTvNodata.visibility = View.GONE
+
+                    val spaceCheck = query.contains(" ")
+
+                    try {
+                        var address = Geocoder(requireContext()).getFromLocationName(query,0)
+
+                        ctprvnNm = address[0].adminArea
+                        signguNm = if(address[0].locality!=null) address[0].locality else ""
+
+                        Log.d("dotton",ctprvnNm)
+                        Log.d("dotton",signguNm)
+
+                        if(spaceCheck && signguNm == ""){
+                            throw Exception()
+                        }else{
+                            getAreaData(true,ctprvnNm,signguNm)
+                        }
+
+                    }catch (e: Exception) {
+                        itemList = ArrayList<AreaItem>()
+                        areaRv.visibility = View.GONE
+                        areaTvNodata.visibility = View.VISIBLE
+                        areaTvNodata.text = "주소가 잘못되었습니다"
+                    }
+                    return true
+                }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    itemList = ArrayList<AreaItem>()
+                    areaRv.visibility = View.GONE
+                    areaTvNodata.visibility = View.GONE
+                    return true
+                }
             })
+       */
         }
     }
     private fun getAreaData(first:Boolean,ctprvnNm:String){
-
-        val areaInterface = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
-
-        val myRetrofit = areaInterface.getAreaData(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm)
+        val myRetrofit = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
+                            .getAreaData(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm)
 
         myRetrofit.enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
@@ -154,11 +166,9 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                         itemList.add(item)
                     }
                     if(first){
-                        var item = AreaItem()
                         binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
                         areaAdapter = ExpandableAdapter(requireContext(),itemList)
-                        //areaAdapter.setList(itemList)
-                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
+                        areaAdapter.notifyItemRangeInserted(0,result.body.items.item.size)
                         binding.areaRv.adapter = areaAdapter
                     }else{
                         areaAdapter.setList(itemList)
