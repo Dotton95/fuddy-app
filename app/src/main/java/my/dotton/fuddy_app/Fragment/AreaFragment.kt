@@ -19,6 +19,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.timer
 import kotlin.math.round
 
 class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
@@ -70,6 +73,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
             areaRv.visibility = View.GONE
             areaTvNodata.visibility = View.GONE
+            areaProgressbar.visibility = View.GONE
 
             areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -89,9 +93,14 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     if(position > 0){
                         itemList.clear()
-                        areaRv.visibility = View.VISIBLE
-                        areaTvNodata.visibility = View.GONE
                         getAreaData(true,spinnerList[position])
+                        areaProgressbar.visibility = View.VISIBLE
+                        areaRv.visibility = View.GONE
+                        areaTvNodata.visibility = View.GONE
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            areaProgressbar.visibility = View.GONE
+                            areaRv.visibility = View.VISIBLE
+                        },2000)
                     }else{
                         areaRv.visibility = View.GONE
                         areaTvNodata.visibility = View.VISIBLE
