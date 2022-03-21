@@ -26,45 +26,19 @@ import kotlin.math.round
 
 class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
-//    type json
-//
-//    prmisnZoneNm 허가구역명
-//    ctprvnNm  시도명
-//    signguNm 시군구명
-//    lnmadr 소재지지번주소
-//    latitude 위도
-//    longitude 경도
-//    vhcleCo 푸드트럭운영대수
-//    primsnZoneRntfee 허가구역 사용료
-//    beginDate 허가구역운영시작일자
-//    endDate 허가구역운영종료일자
-//    rstde 허가구역휴무일
-//    weekdayOperOpenHhmm 허가구역평일운영시작시각
-//    weekdayOperColseHhmm 허가구역평일운영종료시각
-//    wkendOperOpenHhmm 허가구역주말운영시작시각
-//    wkendOperColseHhmm 허가구역주말운영종료시각
-//    lmttPrdlst 판매제한품목
-//    institutionNm 관리기관명
-//    phoneNumber 관리기관 전화번호
-//    referenceDate 데이터 기준일자
-
     private lateinit var areaAdapter:ExpandableAdapter
-    
-    private var totalCount = 0 //전체 아이템 개수
-    private var totalPage = 0//총 페이지 수
-    private var page = 0//현재 페이지
-    private var limit = 20 //한 번에 가져올 아이템 수
 
     companion object{
-        var itemList = ArrayList<AreaItem>()
+        var totalCount = 0 //전체 아이템 개수
+        var totalPage = 0//총 페이지 수
+        var page = 1//현재 페이지
+        var limit = 20//검색할 아이템 갯수
+        var currentCount=0
+        var ctprvnNm = ""
+        var spinnerList = arrayListOf<String>(
+            "시도를 선택해주세요","서울특별시","경기도","인천광역시","강원도","경상남도","경상북도","전라남도","전라북도","충청남도","충청북도","대전광역시","광주광역시","대구광역시","부산광역시","제주특별자치도"
+        )
     }
-    var ctprvnNm = ""
-    var signguNm = ""
-
-    var spinnerList = arrayListOf<String>(
-        "시도를 선택해주세요","서울특별시","경기도","인천광역시","강원도","경상남도","경상북도","전라남도","전라북도","충청남도","충청북도","대전광역시","광주광역시","대구광역시","부산광역시","제주특별자치도"
-    )
-
     override fun initView() {
         super.initView()
         binding.apply {
@@ -76,24 +50,22 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
             areaProgressbar.visibility = View.GONE
 
             areaRv.addOnScrollListener(object :RecyclerView.OnScrollListener(){
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    //화면에 보이는 마지막 아이템의 포지션
-                    if(!areaRv.canScrollVertically(1)){
-                        areaAdapter.deleteLoading()
-                        getAreaData(false,ctprvnNm)
-//                        if(page<totalPage){
-//                            page++
-//
-//                        }
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
+                        if(page<totalPage){//다음 페이지가 있을때
+                            page++
+                            getAreaData(false,ctprvnNm)
+                        }
                     }
                 }
             })
             areaSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     if(position > 0){
-                        itemList.clear()
+                        //itemList.clear()
                         getAreaData(true,spinnerList[position])
+                        ctprvnNm = spinnerList[position]
                         areaProgressbar.visibility = View.VISIBLE
                         areaRv.visibility = View.GONE
                         areaTvNodata.visibility = View.GONE
@@ -113,75 +85,72 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
                     areaTvNodata.text = "시도를 선택해주세요"
                 }
             }
-      /*
-            areaSpinner.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.hideSoftInputFromWindow(areaSearchview.windowToken,0)
-
-                    areaRv.visibility = View.VISIBLE
-                    areaTvNodata.visibility = View.GONE
-
-                    val spaceCheck = query.contains(" ")
-
-                    try {
-                        var address = Geocoder(requireContext()).getFromLocationName(query,0)
-
-                        ctprvnNm = address[0].adminArea
-                        signguNm = if(address[0].locality!=null) address[0].locality else ""
-
-                        Log.d("dotton",ctprvnNm)
-                        Log.d("dotton",signguNm)
-
-                        if(spaceCheck && signguNm == ""){
-                            throw Exception()
-                        }else{
-                            getAreaData(true,ctprvnNm,signguNm)
-                        }
-
-                    }catch (e: Exception) {
-                        itemList = ArrayList<AreaItem>()
-                        areaRv.visibility = View.GONE
-                        areaTvNodata.visibility = View.VISIBLE
-                        areaTvNodata.text = "주소가 잘못되었습니다"
-                    }
-                    return true
-                }
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    itemList = ArrayList<AreaItem>()
-                    areaRv.visibility = View.GONE
-                    areaTvNodata.visibility = View.GONE
-                    return true
-                }
-            })
-       */
         }
     }
     private fun getAreaData(first:Boolean,ctprvnNm:String){
+        /*
+        areaItem dataList
+    type json
+
+prmisnZoneNm 허가구역명
+ctprvnNm  시도명
+signguNm 시군구명
+lnmadr 소재지지번주소
+latitude 위도
+longitude 경도
+vhcleCo 푸드트럭운영대수
+primsnZoneRntfee 허가구역 사용료
+beginDate 허가구역운영시작일자
+endDate 허가구역운영종료일자
+rstde 허가구역휴무일
+weekdayOperOpenHhmm 허가구역평일운영시작시각
+weekdayOperColseHhmm 허가구역평일운영종료시각
+wkendOperOpenHhmm 허가구역주말운영시작시각
+wkendOperColseHhmm 허가구역주말운영종료시각
+lmttPrdlst 판매제한품목
+institutionNm 관리기관명
+phoneNumber 관리기관 전화번호
+referenceDate 데이터 기준일자
+ */
+
+        if(first) page = 0
+
         val myRetrofit = RetrofitClient.areaRetrofit.create(AreaInterface::class.java)
                             .getAreaData(page,limit,"xml",BuildConfig.COVID_API_KEY,ctprvnNm)
 
         myRetrofit.enqueue(object : Callback<AreaResponse> {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if(response.isSuccessful){
+
                     val result = response.body() as AreaResponse
-                    totalCount = result.body.totalCount
-                    page = result.body.pageNo
-                    totalPage = totalCount/limit + 1
+                    var addItemList = ArrayList<AreaItem>()
+
                     for(i in result.body.items.item.indices){
+                        currentCount++
+                        //데이터 UI 세팅
                         var item = AreaItem()
                         item.name = result.body.items.item[i].prmisnZoneNm+""
                         item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
-                        itemList.add(item)
+                        addItemList.add(item)
                     }
                     if(first){
+                        //처음검색시 결과값 가져오기
+                        totalCount = result.body.totalCount
+                        page = result.body.pageNo
+                        totalPage = totalCount/limit + 1
+
+                        if(totalPage!=1)  addItemList.add(AreaItem("",""))
+
                         binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
-                        areaAdapter = ExpandableAdapter(requireContext(),itemList)
-                        areaAdapter.notifyItemRangeInserted(0,result.body.items.item.size)
+                        areaAdapter = ExpandableAdapter(requireContext(),addItemList)
+                        areaAdapter.notifyDataSetChanged()
                         binding.areaRv.adapter = areaAdapter
                     }else{
-                        areaAdapter.setList(itemList)
-                        areaAdapter.notifyItemRangeInserted((page-1)*10,result.body.items.item.size)
+                        areaAdapter.deleteLoading()
+                        areaAdapter.setList(addItemList)
+                        if(page==totalPage)   areaAdapter.deleteLoading()
+                        areaAdapter.notifyDataSetChanged()
+
                     }
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")

@@ -64,7 +64,7 @@ class ExpandableAdapter(private val context: Context,val itemList:ArrayList<Area
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(holder is ExpandableViewHolder){
-            holder.bind(itemList[position],position)
+            holder.bind(itemList[holder.adapterPosition],position)
         }else { }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ViewHolder {
