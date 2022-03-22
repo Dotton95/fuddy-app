@@ -1,41 +1,28 @@
 package my.dotton.fuddy_app
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import my.dotton.fuddy_app.databinding.AreaItemRowBinding
 import my.dotton.fuddy_app.databinding.LoadingItemBinding
-import my.dotton.fuddy_app.databinding.WeatherchartItemBinding
 
-//    prmisnZoneNm 허가구역명
-//    ctprvnNm  시도명
-//    signguNm 시군구명
-//    lnmadr 소재지지번주소
-//    latitude 위도
-//    longitude 경도
-//    vhcleCo 푸드트럭운영대수
-//    primsnZoneRntfee 허가구역 사용료
-//    beginDate 허가구역운영시작일자
-//    endDate 허가구역운영종료일자
-//    rstde 허가구역휴무일
-//    weekdayOperOpenHhmm 허가구역평일운영시작시각
-//    weekdayOperColseHhmm 허가구역평일운영종료시각
-//    wkendOperOpenHhmm 허가구역주말운영시작시각
-//    wkendOperColseHhmm 허가구역주말운영종료시각
-//    lmttPrdlst 판매제한품목
-//    institutionNm 관리기관명
-//    phoneNumber 관리기관 전화번호
-//    referenceDate 데이터 기준일자
 data class AreaItem(
     var name:String ="",
     var date:String = "",
+    var lnmadr:String = "",
+    var vhcleCo:String = "",
+    var primsnZoneRntfee:String = "",
+    var weekdayTime:String = "",
+    var wkendTime:String = "",
+    var rstde:String = "",
+    var lmttPrdlst:String = "",
+    var institutionNm:String = "",
+    var phoneNumber:String = "",
+    var referenceDate:String = "",
     var isExpanded:Boolean = false
 )
 
@@ -50,6 +37,18 @@ class ExpandableAdapter(private val context: Context,val itemList:ArrayList<Area
         fun bind(areaItem: AreaItem, position: Int) {
             binding.areaItemTvName.text = areaItem.name
             binding.areaItemTvDate.text = areaItem.date
+
+            binding.areaITemTvLnmadr.text = areaItem.lmttPrdlst
+            binding.areaItemTvVhcleCo.text = areaItem.vhcleCo
+            binding.areaItemTvZoneRntFree.text = areaItem.primsnZoneRntfee
+            binding.areaItemTvWeekdayTime.text = areaItem.weekdayTime
+            binding.areaItemTvWkendTime.text = areaItem.wkendTime
+            binding.areaItemTvRstde.text = areaItem.rstde
+            binding.areaItemTvLmttPrdlst.text = areaItem.lmttPrdlst
+            binding.areaItemTvInstitutionNm.text = areaItem.institutionNm
+            binding.areaItemTvPhoneNumber.text = areaItem.phoneNumber
+            binding.areaItemTvReferenceDate.text = areaItem.referenceDate
+
             binding.areaItemBtnArrow.setOnClickListener {
                 areaItem.isExpanded = toggleLayout(!areaItem.isExpanded,it,binding.areaItemExpandedLayout)
             }
