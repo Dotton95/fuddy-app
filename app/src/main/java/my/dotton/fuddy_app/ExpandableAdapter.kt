@@ -38,7 +38,7 @@ class ExpandableAdapter(private val context: Context,val itemList:ArrayList<Area
             binding.areaItemTvName.text = areaItem.name
             binding.areaItemTvDate.text = areaItem.date
 
-            binding.areaITemTvLnmadr.text = areaItem.lmttPrdlst
+            binding.areaITemTvLnmadr.text = areaItem.lnmadr
             binding.areaItemTvVhcleCo.text = areaItem.vhcleCo
             binding.areaItemTvZoneRntFree.text = areaItem.primsnZoneRntfee
             binding.areaItemTvWeekdayTime.text = areaItem.weekdayTime

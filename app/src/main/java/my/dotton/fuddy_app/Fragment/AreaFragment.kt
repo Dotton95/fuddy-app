@@ -1,15 +1,11 @@
 package my.dotton.fuddy_app.Fragment
 
-import android.content.Context
-import android.location.Geocoder
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import my.dotton.fuddy_app.*
@@ -18,11 +14,7 @@ import my.dotton.fuddy_app.databinding.FragmentAreaBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Exception
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.timer
-import kotlin.math.round
 
 class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
 
@@ -36,7 +28,9 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
         var currentCount=0
         var ctprvnNm = ""
         var spinnerList = arrayListOf<String>(
-            "시도를 선택해주세요","서울특별시","경기도","인천광역시","강원도","경상남도","경상북도","전라남도","전라북도","충청남도","충청북도","대전광역시","광주광역시","대구광역시","부산광역시","제주특별자치도"
+            "시도를 선택해주세요","서울특별시","경기도","인천광역시","강원도",
+            "경상남도","경상북도","전라남도","전라북도","충청남도","충청북도",
+            "대전광역시","광주광역시","대구광역시","부산광역시","제주특별자치도"
         )
     }
     override fun initView() {
@@ -88,30 +82,7 @@ class AreaFragment : BaseFragment<FragmentAreaBinding>(R.layout.fragment_area) {
         }
     }
     private fun getAreaData(first:Boolean,ctprvnNm:String){
-        /*
-        areaItem dataList
-    type json
 
-prmisnZoneNm 허가구역명
-ctprvnNm  시도명
-signguNm 시군구명
-lnmadr 소재지지번주소
-latitude 위도
-longitude 경도
-vhcleCo 푸드트럭운영대수
-primsnZoneRntfee 허가구역 사용료
-beginDate 허가구역운영시작일자
-endDate 허가구역운영종료일자
-rstde 허가구역휴무일
-weekdayOperOpenHhmm 허가구역평일운영시작시각
-weekdayOperColseHhmm 허가구역평일운영종료시각
-wkendOperOpenHhmm 허가구역주말운영시작시각
-wkendOperColseHhmm 허가구역주말운영종료시각
-lmttPrdlst 판매제한품목
-institutionNm 관리기관명
-phoneNumber 관리기관 전화번호
-referenceDate 데이터 기준일자
- */
 
         if(first) page = 0
 
@@ -129,8 +100,25 @@ referenceDate 데이터 기준일자
                         currentCount++
                         //데이터 UI 세팅
                         var item = AreaItem()
-                        item.name = result.body.items.item[i].prmisnZoneNm+""
+                        //16
+                        var name = result.body.items.item[i].prmisnZoneNm
+                        if (name.length > 20) name = name.substring(0 until 20).plus("...")
+                        item.name = name
                         item.date = result.body.items.item[i].beginDate.plus(" ~ ").plus(result.body.items.item[i].endDate)
+
+                        item.lnmadr = result.body.items.item[i].lnmadr //소재지지번주소
+                        item.vhcleCo = result.body.items.item[i].vhcleCo //푸드트럭운영대수
+                        item.primsnZoneRntfee = result.body.items.item[i].prmisnZoneRntfee //허가구역명
+                        //허가구역평일운영시작시각 ~ 허가구역평일운영종료시각
+                        item.weekdayTime = result.body.items.item[i].weekdayOperOpenHhmm.plus(" ~ ").plus(result.body.items.item[i].weekdayOperColseHhmm)
+                        //허가구역주말운영시작시각 ~ 허가구역주말운영종료시각
+                        item.wkendTime = result.body.items.item[i].wkendOperOpenHhmm.plus(" ~ ").plus(result.body.items.item[i].wkendOperCloseHhmm)
+                        item.rstde = result.body.items.item[i].rstde //허가구역휴무일
+                        item.lmttPrdlst = result.body.items.item[i].lmttPrdlst //판매제한품목
+                        item.institutionNm = result.body.items.item[i].institutionNm //관리기관명
+                        item.phoneNumber = result.body.items.item[i].phoneNumber //관리기관 전화번호
+                        item.referenceDate = result.body.items.item[i].referenceDate //데이터 기준일자
+
                         addItemList.add(item)
                     }
                     if(first){
@@ -143,15 +131,13 @@ referenceDate 데이터 기준일자
 
                         binding.areaRv.layoutManager = LinearLayoutManager(requireContext())
                         areaAdapter = ExpandableAdapter(requireContext(),addItemList)
-                        areaAdapter.notifyDataSetChanged()
                         binding.areaRv.adapter = areaAdapter
                     }else{
                         areaAdapter.deleteLoading()
                         areaAdapter.setList(addItemList)
                         if(page==totalPage)   areaAdapter.deleteLoading()
-                        areaAdapter.notifyDataSetChanged()
-
                     }
+                    areaAdapter.notifyDataSetChanged()
                 }else{
                     Log.d("AreaFragment","getAreaData - onResponse : Error code ${response.code()}")
                 }
